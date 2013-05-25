@@ -1,20 +1,3 @@
-/* CSS declarations go here */
-.picture {
-  position: relative;
-  /*background-image: url('/soma.png');*/
-  /*background-position: -20px -20px;*/
-  width: 500px;
-  height: 500px;
-}
-
-.grid {
-  position: relative;
-  /*background-image: url('/soma.png');*/
-  /*background-position: -20px -20px;*/
-  width: 520px;
-  height: 520px;
-}
-
 .rawpix {
   position: relative;
   /*background-image: url('/soma.png');*/
