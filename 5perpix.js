@@ -36,12 +36,12 @@ function getStringEJSONColor(colorEJSON) {
     + colorEJSON[2] + ")";
 }
 
-function getStringColorChannels(r, g, b) {
-  return "rgb(" 
-    + r + "," 
-    + g + "," 
-    + b + ")";
-}
+// function getStringColorChannels(r, g, b) {
+//   return "rgb(" 
+//     + r + "," 
+//     + g + "," 
+//     + b + ")";
+// }
 
 /**
  * CLIENTS ONLY
@@ -99,19 +99,19 @@ if (Meteor.isClient) {
             .attr("rx", 6)
             .attr("ry", 6)
             // .style("fill", function(d) { return d.fill; })
-            .style("fill", function(d) { return getStringColorChannels(d.r, d.g, d.b); })
+            .style("fill", function(d) { return getStringEJSONColor(d.c); })
             .style("stroke", '#555')
             .on('click', function(e) { // on click
                 console.log("click: _id=" + e._id);
-                Minpixels.update(e._id, {$set: {r: getRandomColorChannel() }});
+                Minpixels.update(e._id, {$set: {c: getRandomEJSONColor() }});
              })
             .on('mouseover', function(e) { // on mouseover
                 console.log("mouseover: _id=" + e._id);
-                Minpixels.update(e._id, {$set: {r: getRandomColorChannel() }});
+                Minpixels.update(e._id, {$set: {c: getRandomEJSONColor() }});
              })
              .on('mouseout', function() { // on mouseout
                 d3.select(this)
-                    .style("fill", function(d) { return getStringColorChannels(d.r, d.g, d.b); });
+                    .style("fill", function(d) { return getStringEJSONColor(d.c); });
              });
         };
 
@@ -126,7 +126,7 @@ if (Meteor.isClient) {
         d3.select(self.node).select(".pixs").selectAll("rect")
           .data(Minpixels.find({p: Session.get("selected_picture")}).fetch(), 
             function (minpix) {return minpix._id; })
-          .style("fill", function(d) { return getStringColorChannels(d.r, d.g, d.b); })
+          .style("fill", function(d) { return getStringEJSONColor(d.c); })
 
         // kill pixel on remove from data source
         minpix.exit().remove();
@@ -194,9 +194,7 @@ if (Meteor.isServer) {
         
 
         Minpixels.insert({x: index_x, y: index_y, 
-          r: getRandomColorChannel(),
-          g: getRandomColorChannel(),
-          b: getRandomColorChannel(),
+          c: getRandomEJSONColor(),
           p: pID});
       }
     }
