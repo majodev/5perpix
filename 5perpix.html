@@ -3,15 +3,45 @@
 </head>
 
 <body>
-  {{> rawpix}}
+  {{> overview}}
+  {{> rawholder}}
 </body>
+
+<template name="rawholder">
+  {{#if selected_picture}}
+    <div class="none">Picture selected!</div>
+    {{> rawpix}}
+  {{/if}}
+  {{#unless selected_picture}}
+    <div class="none">Select a Picture</div>
+  {{/unless}}
+</template>
 
 <template name="rawpix">
   <div class="rawpix">
-      {{#constant}}
-        <svg id="rawsvg" width="520" height="520" >
-          <g class="pixs"></g>
-        </svg>
-      {{/constant}}
+    {{#constant}}
+      <svg id="rawsvg" width="520" height="520" >
+        <g class="pixs"></g>
+      </svg>
+    {{/constant}}
+  </div>
+</template>
+
+<template name="overview">
+  <div class="overview">
+    {{#each pictures}}
+      {{> picture}}
+    {{/each}}
+  </div>
+</template>
+
+<template name="picture">
+  <div class="picture {{selected}}">
+    <span class="id">{{_id}}</span>
+    <span class="name">{{name}}</span>
+    <span class="width">{{width}}</span>
+    <span class="height">{{height}}</span>
+    <span class="rows">{{rows}}</span>
+    <span class="cols">{{cols}}</span>
   </div>
 </template>

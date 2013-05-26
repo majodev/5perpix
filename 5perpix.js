@@ -4,6 +4,8 @@
  */
 Minpixels = new Meteor.Collection('minpixels');
 
+Minpictures = new Meteor.Collection('minpictures');
+
 /**
  * Helper function to return a randomly generated fillstyle as a string.
  * @return {String} fill(style)-string thats randomly generated.
@@ -15,28 +17,51 @@ function getRandomStyleColor() {
           Math.floor(Math.random()*256)+")";
 }
 
+function getRandomColorPalette() {
+  return Math.floor(Math.random()*5);
+}
+
 /**
  * CLIENTS ONLY
  */
 if (Meteor.isClient) {
 
+  // HACK - TODO CHANGE: Set the Session Var to the first picid for now...
+  var hackPic = Minpictures.findOne();
+
   /**
    * Template rawpix rendered function. Called when rawpix was successfully rendered the first time
    * Defines algorithms to be executed by Deps.autorun on Template Change / Datachange.
    */
+  
+
+  Template.overview.pictures = function () {
+    return Minpictures.find({});
+  };
+
+  Template.picture.events({
+    'click': function () {
+      Session.set("selected_picture", this._id);
+    }
+  });
+
+  Template.rawholder.selected_picture = function () {
+    var pic = Minpictures.findOne(Session.get("selected_picture"));
+    return pic && pic.name;
+  };
+
   Template.rawpix.rendered = function () {
     console.log("Template.rawpix.rendered");
     var self = this;
     self.node = self.find("svg");
 
     if(! self.handle) {
-
       /**
        * Defines the Deps.autorun for the rawpix template
        */
       self.handle = Deps.autorun(function (){
         console.log("Template.rawpix.rendered: Deps.autorun");
-        
+
         /**
          * Init / Update on change
          * @param  {svg:rect} Needs d3.js rects as parameter.
@@ -45,14 +70,12 @@ if (Meteor.isClient) {
 
           console.log("Template.rawpix.rendered: Deps.autorun: updateRaw")
 
-          rect.attr("x", function(d) { return d.x; })
-            .attr("y", function(d) { return d.y; })
-            .attr("width", function(d) { return d.width; })
-            .attr("height", function(d) { return d.height; })
-            .attr("index_x", function(d) { return d.index_x; })
-            .attr("index_y", function(d) { return d.index_y; })
-            .attr("name", function(d) { return d.name; })
-            .attr("meteor_id", function(d) { return d._id; })
+          rect.attr("x", function(d) { return (d.x) * Minpictures.findOne(d.pID).itemwidth; })
+            .attr("y", function(d) { return (d.y) * Minpictures.findOne(d.pID).itemheight; })
+            .attr("width", function(d) { return Minpictures.findOne(d.pID).itemwidth; })
+            .attr("height", function(d) { return Minpictures.findOne(d.pID).itemheight; })
+            // .attr("rx", 3)
+            // .attr("ry", 3)
             .style("fill", function(d) { return d.fill; })
             .style("stroke", '#555')
             .on('click', function(e) { // on click
@@ -71,13 +94,13 @@ if (Meteor.isClient) {
 
         // bind my pixel data to the g class .pixels 
         var minpix = d3.select(self.node).select(".pixs").selectAll("rect")
-          .data(Minpixels.find().fetch(), function (minpix) {return minpix._id; });
+          .data(Minpixels.find({pID: Session.get("selected_picture")}).fetch(), function (minpix) {return minpix._id; });
 
 
         // data update only triggers fill to refresh
         updateRaw(minpix.enter().append("svg:rect"));
         d3.select(self.node).select(".pixs").selectAll("rect")
-          .data(Minpixels.find().fetch(), function (minpix) {return minpix._id; }).style("fill", function(d) { return d.fill; })
+          .data(Minpixels.find({pID: Session.get("selected_picture")}).fetch(), function (minpix) {return minpix._id; }).style("fill", function(d) { return d.fill; })
 
         // kill pixel on remove from data source
         minpix.exit().remove();
@@ -105,49 +128,46 @@ if (Meteor.isServer) {
    */
   Meteor.startup(function() {
       console.log("Meteor.startup");
-      if(Minpixels.find().count() == 0) {
-        console.log("Meteor.startup: Adding Minpixels...");
-        addPixels(500, 500, true, 10, 10);
+      if(Minpictures.find().count() === 0) {
+        console.log("Meteor.startup: no pictures found, adding...");
+        addPictureWithPixels("Big-ManyPixels", 500, 500, 20, 20);
+        addPictureWithPixels("Big-MediumPixels", 500, 500, 12, 12);
+        addPictureWithPixels("Big-FewPixels", 500, 500, 5, 5);
+        addPictureWithPixels("Medium-ManyPixels", 250, 250, 20, 20);
+        addPictureWithPixels("Medium-MediumPixels", 250, 250, 12, 12);
+        addPictureWithPixels("Medium-FewPixels", 250, 250, 5, 5);
+        addPictureWithPixels("Small-ManyPixels", 50, 50, 20, 20);
+        addPictureWithPixels("Small-MediumPixels", 50, 50, 12, 12);
+        addPictureWithPixels("Small-FewPixels", 50, 50, 5, 5);
       }
-    // }
   });
+
+  addPictureWithPixels = function(name, gridWidth, gridHeight, rows, cols) {
+    var gridItemWidth = gridWidth / rows;
+    var gridItemHeight = (true) ? gridItemWidth : gridHeight / cols;
+
+    console.log("addPictureWithPixels: Adding Minpicture...");
+    var picID = Minpictures.insert({width: gridWidth, height: gridHeight, 
+      itemwidth: gridItemWidth, itemheight: gridItemHeight, 
+      rows: rows, cols: cols, 
+      name: name});
+
+    addPixels(rows, cols, picID);
+  };
 
   /**
    * addPixels defines a function to fill an example grid with data --> Minpixels
-   * @param  {[type]} gridWidth  width of the visual grid
-   * @param  {[type]} gridHeight height of the visual grid
-   * @param  {[type]} square     true if pixels should be square
-   * @param  {[type]} rows       count of rows to generate --> resolution x
-   * @param  {[type]} cols       count of cols to generate --> resolution y
+   * @param  {[type]} rows       count of rows to generate --> x
+   * @param  {[type]} cols       count of cols to generate --> y
+   * @param  {[type]} pid        reference to picture --> pID
    */
-  addPixels = function(gridWidth, gridHeight, square, rows, cols) {
-
-    var countRows = rows;
-    var countCols = cols;
-
-    console.log("addPixels: gridWidth=" + gridWidth + " gridHeight=" + gridHeight + " square=" + square + " rows=" + rows + " cols=" + cols);
-
-    var gridItemWidth = gridWidth / countRows;
-    var gridItemHeight = (square) ? gridItemWidth : gridHeight / countCols;
-    var startX = gridItemWidth / 2;
-    var startY = gridItemHeight / 2;
-    var stepX = gridItemWidth;
-    var stepY = gridItemHeight;
-    var xpos = startX;
-    var ypos = startY;
-    var count = 0;
-
-    for (var index_y = 0; index_y < countRows; index_y++) {
-      for (var index_x = 0; index_x < countCols; index_x++) {
-        var name = "x" + index_x + "y" + index_y
-        Minpixels.insert({name: name, grid_x: index_x, grid_y: index_y, x: xpos, y: ypos, fill: getRandomStyleColor(), width: gridItemWidth, height: gridItemHeight});
-
-        xpos += stepX;
-        count += 1;
+  addPixels = function(rows, cols, pID) {
+    console.log("addPixels: pID=" + pID + " rows=" + rows + " cols=" + cols);
+    for (var index_y = 0; index_y < rows; index_y++) {
+      for (var index_x = 0; index_x < cols; index_x++) {
+        //var name = "x" + index_x + "y" + index_y
+        Minpixels.insert({x: index_x, y: index_y, fill: getRandomStyleColor(), pID: pID});
       }
-
-      xpos = startX;
-      ypos += stepY;
     }
   };
 }
