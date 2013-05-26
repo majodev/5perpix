@@ -17,8 +17,30 @@ function getRandomStyleColor() {
           Math.floor(Math.random()*256)+")";
 }
 
-function getRandomColorPalette() {
-  return Math.floor(Math.random()*5);
+function getRandomColorChannel() {
+  return Math.floor(Math.random()*256);
+}
+
+function getRandomEJSONColor() {
+  var color = EJSON.newBinary(3);
+        color[0] = getRandomColorChannel();
+        color[1] = getRandomColorChannel();
+        color[2] = getRandomColorChannel();
+  return color;
+}
+
+function getStringEJSONColor(colorEJSON) {
+  return "rgb(" 
+    + colorEJSON[0] + "," 
+    + colorEJSON[1] + "," 
+    + colorEJSON[2] + ")";
+}
+
+function getStringColorChannels(r, g, b) {
+  return "rgb(" 
+    + r + "," 
+    + g + "," 
+    + b + ")";
 }
 
 /**
@@ -70,37 +92,41 @@ if (Meteor.isClient) {
 
           console.log("Template.rawpix.rendered: Deps.autorun: updateRaw")
 
-          rect.attr("x", function(d) { return (d.x) * Minpictures.findOne(d.pID).itemwidth; })
-            .attr("y", function(d) { return (d.y) * Minpictures.findOne(d.pID).itemheight; })
-            .attr("width", function(d) { return Minpictures.findOne(d.pID).itemwidth; })
-            .attr("height", function(d) { return Minpictures.findOne(d.pID).itemheight; })
-            // .attr("rx", 3)
-            // .attr("ry", 3)
-            .style("fill", function(d) { return d.fill; })
+          rect.attr("x", function(d) { return (d.x) * Minpictures.findOne(d.p).itemwidth; })
+            .attr("y", function(d) { return (d.y) * Minpictures.findOne(d.p).itemheight; })
+            .attr("width", function(d) { return Minpictures.findOne(d.p).itemwidth; })
+            .attr("height", function(d) { return Minpictures.findOne(d.p).itemheight; })
+            .attr("rx", 6)
+            .attr("ry", 6)
+            // .style("fill", function(d) { return d.fill; })
+            .style("fill", function(d) { return getStringColorChannels(d.r, d.g, d.b); })
             .style("stroke", '#555')
             .on('click', function(e) { // on click
                 console.log("click: _id=" + e._id);
-                Minpixels.update(e._id, {$set: {fill: getRandomStyleColor() }});
+                Minpixels.update(e._id, {$set: {r: getRandomColorChannel() }});
              })
             .on('mouseover', function(e) { // on mouseover
                 console.log("mouseover: _id=" + e._id);
-                Minpixels.update(e._id, {$set: {fill: getRandomStyleColor() }});
+                Minpixels.update(e._id, {$set: {r: getRandomColorChannel() }});
              })
              .on('mouseout', function() { // on mouseout
                 d3.select(this)
-                    .style("fill", function(d) { return d.fill; });
+                    .style("fill", function(d) { return getStringColorChannels(d.r, d.g, d.b); });
              });
         };
 
         // bind my pixel data to the g class .pixels 
         var minpix = d3.select(self.node).select(".pixs").selectAll("rect")
-          .data(Minpixels.find({pID: Session.get("selected_picture")}).fetch(), function (minpix) {return minpix._id; });
+          .data(Minpixels.find({p: Session.get("selected_picture")}).fetch(), 
+            function (minpix) {return minpix._id; });
 
 
         // data update only triggers fill to refresh
         updateRaw(minpix.enter().append("svg:rect"));
         d3.select(self.node).select(".pixs").selectAll("rect")
-          .data(Minpixels.find({pID: Session.get("selected_picture")}).fetch(), function (minpix) {return minpix._id; }).style("fill", function(d) { return d.fill; })
+          .data(Minpixels.find({p: Session.get("selected_picture")}).fetch(), 
+            function (minpix) {return minpix._id; })
+          .style("fill", function(d) { return getStringColorChannels(d.r, d.g, d.b); })
 
         // kill pixel on remove from data source
         minpix.exit().remove();
@@ -133,12 +159,12 @@ if (Meteor.isServer) {
         addPictureWithPixels("Big-ManyPixels", 500, 500, 20, 20);
         addPictureWithPixels("Big-MediumPixels", 500, 500, 12, 12);
         addPictureWithPixels("Big-FewPixels", 500, 500, 5, 5);
-        addPictureWithPixels("Medium-ManyPixels", 250, 250, 20, 20);
-        addPictureWithPixels("Medium-MediumPixels", 250, 250, 12, 12);
-        addPictureWithPixels("Medium-FewPixels", 250, 250, 5, 5);
-        addPictureWithPixels("Small-ManyPixels", 50, 50, 20, 20);
-        addPictureWithPixels("Small-MediumPixels", 50, 50, 12, 12);
-        addPictureWithPixels("Small-FewPixels", 50, 50, 5, 5);
+        addPictureWithPixels("Medium-ManyPixels", 350, 350, 20, 20);
+        addPictureWithPixels("Medium-MediumPixels", 350, 350, 12, 12);
+        addPictureWithPixels("Medium-FewPixels", 350, 350, 5, 5);
+        addPictureWithPixels("Small-ManyPixels", 200, 200, 20, 20);
+        addPictureWithPixels("Small-MediumPixels", 200, 200, 12, 12);
+        addPictureWithPixels("Small-FewPixels", 200, 200, 5, 5);
       }
   });
 
@@ -159,14 +185,19 @@ if (Meteor.isServer) {
    * addPixels defines a function to fill an example grid with data --> Minpixels
    * @param  {[type]} rows       count of rows to generate --> x
    * @param  {[type]} cols       count of cols to generate --> y
-   * @param  {[type]} pid        reference to picture --> pID
+   * @param  {[type]} pID        reference to picture --> p
    */
   addPixels = function(rows, cols, pID) {
     console.log("addPixels: pID=" + pID + " rows=" + rows + " cols=" + cols);
     for (var index_y = 0; index_y < rows; index_y++) {
       for (var index_x = 0; index_x < cols; index_x++) {
-        //var name = "x" + index_x + "y" + index_y
-        Minpixels.insert({x: index_x, y: index_y, fill: getRandomStyleColor(), pID: pID});
+        
+
+        Minpixels.insert({x: index_x, y: index_y, 
+          r: getRandomColorChannel(),
+          g: getRandomColorChannel(),
+          b: getRandomColorChannel(),
+          p: pID});
       }
     }
   };

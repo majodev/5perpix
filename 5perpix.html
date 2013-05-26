@@ -9,7 +9,7 @@
 
 <template name="rawholder">
   {{#if selected_picture}}
-    <div class="none">Picture selected!</div>
+    <div class="none">Picture selected: {{selected_picture}}</div>
     {{> rawpix}}
   {{/if}}
   {{#unless selected_picture}}
@@ -37,8 +37,8 @@
 
 <template name="picture">
   <div class="picture {{selected}}">
-    <span class="id">{{_id}}</span>
     <span class="name">{{name}}</span>
+    <span class="id">{{_id}}</span>
     <span class="width">{{width}}</span>
     <span class="height">{{height}}</span>
     <span class="rows">{{rows}}</span>
