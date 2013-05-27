@@ -10,6 +10,8 @@ Minpixels = new Meteor.Collection('minpixels');
  */
 Minpictures = new Meteor.Collection('minpictures');
 
+
+DrawKeepRunning = true;
 /**
  * Helper function to return a randomly generated color channel as int
  * @return {int} Random int between 0 and 256
@@ -155,7 +157,9 @@ if (Meteor.isClient) {
 
 
         // data update only triggers fill to refresh
-        updateRaw(minpix.enter().append("svg:rect"));
+        if(DrawKeepRunning) {
+          updateRaw(minpix.enter().append("svg:rect"));
+        }
         d3.select(self.node).select(".pixs").selectAll("rect")
           .data(Minpixels.find({p: Session.get("selected_picture")}).fetch(), 
             function (minpix) {return minpix._id; })
