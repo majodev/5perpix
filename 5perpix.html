@@ -9,11 +9,10 @@
 
 <template name="rawholder">
   {{#if selected_picture}}
-    <div class="none">Picture selected: {{selected_picture}}</div>
     {{> rawpix}}
   {{/if}}
   {{#unless selected_picture}}
-    <div class="none">Select a Picture</div>
+    <div class="none">Select a picture!</div>
   {{/unless}}
 </template>
 
@@ -36,7 +35,8 @@
 </template>
 
 <template name="picture">
-  <div class="picture {{selected}}">
+  <!-- no space between div 'class' and 'handlebar' is intended! -->
+  <div class="picture{{selected}}"> 
     <span class="name">{{name}}</span>
     <span class="id">{{_id}}</span>
     <span class="width">{{width}}</span>
