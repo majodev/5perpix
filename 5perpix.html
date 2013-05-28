@@ -5,6 +5,7 @@
 <body>
   {{loginButtons}}
 
+  {{> userInformationDisplay}}
   {{> pictureOverviewDisplay}}
   {{> pictureVisualization}}
 
@@ -25,6 +26,16 @@
 
 </template>
 
+<!-- User Information -->
+<template name="userInformationDisplay">
+  {{#if currentUser}}
+    <div class="userInformation">Logged in! Let's smash these pixarts!</div>
+  {{/if}}
+  {{#unless currentUser}}
+    <div class="userInformation">Please login to smash these pixarts!</div>
+  {{/unless}}
+</template>
+
 <!-- Picture Visualization -->
 
 <template name="pictureVisualization">
@@ -32,7 +43,7 @@
     {{> pictureVisualizationItemSVG}}
   {{/if}}
   {{#unless selected_picture}}
-    <div class="none">Select a picture!</div>
+    <div class="pictureInformation">Select a picture!</div>
   {{/unless}}
 </template>
 

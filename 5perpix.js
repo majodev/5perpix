@@ -241,28 +241,52 @@ if (Meteor.isServer) {
     fetch: ['x', 'y', 'picID']
   });
 
+  MrtPixelCollection.deny({
+    update: function (userId, doc, fields, modifier) {
+      // changes to x, y and pID denied!
+      if(Meteor.userId() === null)
+        return true;
+      else
+        return false;
+    },
+
+    fetch: []
+  });
+
 
   /**
    * Called on server-startup to fill some example pictures and pixels to our Collections if nothing exists
    */
   Meteor.startup(function() {
-      console.log("Meteor.startup");
-      if(MrtPictureCollection.find().count() === 0) {
-        console.log("Meteor.startup: no pictures found, adding...");
-
-        addTestPictureWithPixels("SmallPicture-FewPixels", 200, 200, 5, 5);
-        addTestPictureWithPixels("MediumPicture-FewPixels", 350, 350, 5, 5);
-        addTestPictureWithPixels("BigPicture-FewPixels", 500, 500, 5, 5);
-
-        addTestPictureWithPixels("SmallPicture-MediumPixels", 200, 200, 12, 12);
-        addTestPictureWithPixels("MediumPicture-MediumPixels", 350, 350, 12, 12);
-        addTestPictureWithPixels("BigPicture-MediumPixels", 500, 500, 12, 12);
-
-        addTestPictureWithPixels("SmallPicture-ManyPixels", 200, 200, 20, 20);
-        addTestPictureWithPixels("MediumPicture-ManyPixels", 350, 350, 20, 20);
-        addTestPictureWithPixels("BigPicture-ManyPixels", 500, 500, 20, 20);
-      }
+    if(MrtPictureCollection.find().count() < 1) {
+      console.log("Meteor.startup: removing old documents from collections...");
+      resetAllMrtCollections();
+    }
   });
+
+  resetAllMrtCollections = function() {
+    MrtPixelHistoryCollection.remove({}, function() {
+      MrtPixelCollection.remove({}, function() {
+        MrtMessageCollection.remove({}, function() {
+          MrtPictureCollection.remove({}, function() {
+            console.log("Meteor.startup: pictures resetted, adding new...");
+            addTestPictureWithPixels("SmallPicture-FewPixels", 200, 200, 5, 5);
+            addTestPictureWithPixels("MediumPicture-FewPixels", 350, 350, 5, 5);
+            addTestPictureWithPixels("BigPicture-FewPixels", 500, 500, 5, 5);
+
+            addTestPictureWithPixels("SmallPicture-MediumPixels", 200, 200, 12, 12);
+            addTestPictureWithPixels("MediumPicture-MediumPixels", 350, 350, 12, 12);
+            addTestPictureWithPixels("BigPicture-MediumPixels", 500, 500, 12, 12);
+
+            addTestPictureWithPixels("SmallPicture-ManyPixels", 200, 200, 20, 20);
+            addTestPictureWithPixels("MediumPicture-ManyPixels", 350, 350, 20, 20);
+            addTestPictureWithPixels("BigPicture-ManyPixels", 500, 500, 20, 20);
+          })
+        })
+      })
+    });
+  };
+  
 
 
   addPixelHistoryFromPixel = function(pixID) {
@@ -328,6 +352,7 @@ if (Meteor.isServer) {
           y: index_y, 
           color: getRandomEJSONColor(),
           picID: picID,
+          userID: "SERVER"
         });
         //count++;
       }
