@@ -5,35 +5,51 @@
 <body>
   {{loginButtons}}
 
-  {{> overview}}
-  {{> pictureGridHolder}}
+  {{> pictureOverviewDisplay}}
+  {{> pictureVisualization}}
 
   <footer>
     by <a href="http://www.majodev.com">majodev.com</a>
   </footer>
 </body>
 
-<template name="pictureGridHolder">
+<template name="messagesHolder">
+
+</template>
+
+<template name="messagesDisplay">
+
+</template>
+
+<template name="messageItem">
+
+</template>
+
+<!-- Picture Visualization -->
+
+<template name="pictureVisualization">
   {{#if selected_picture}}
-    {{> pictureGridSVG}}
+    {{> pictureVisualizationItemSVG}}
   {{/if}}
   {{#unless selected_picture}}
     <div class="none">Select a picture!</div>
   {{/unless}}
 </template>
 
-<template name="pictureGridSVG">
-  <div class="pictureGridSVG">
+<template name="pictureVisualizationItemSVG">
+  <div class="pictureVisualizationItemSVG">
     {{#constant}}
-      <svg id="rawsvg" width="520" height="520" >
-        <g class="pixs"></g>
+      <svg id="pictureVisualizationItemSVGContainer" width="520" height="520" >
+        <g class="pictureVisualizationItemSVGPixels"></g>
       </svg>
     {{/constant}}
   </div>
 </template>
 
-<template name="overview">
-  <div class="overview">
+<!-- Pictures Overview -->
+
+<template name="pictureOverviewDisplay">
+  <div class="pictureOverviewDisplay">
     {{#each pictures}}
       {{> picture}}
     {{/each}}

@@ -2,19 +2,24 @@
  * Meteor Collection Pixels, clients subscribe to pixels on picture (p)
  * @type {Meteor.Collection}
  */
-Minpixels = new Meteor.Collection('minpixels');
+MrtPixelCollection = new Meteor.Collection('mrtpixelcollection');
+
+
+MrtPixelHistoryCollection = new Meteor.Collection('mrtpixelhistorycollection');
+
 
 /**
  * Meteor Collection Pictures, fully available on clients
  * @type {Meteor.Collection}
  */
-Minpictures = new Meteor.Collection('minpictures');
+MrtPictureCollection = new Meteor.Collection('mrtpicturecollection');
 
+/**
+ * Holds all messages, these are linked to pictures
+ * @type {Meteor.Collection}
+ */
+MrtMessageCollection = new Meteor.Collection('mrtmessagecollection');
 
-MinMessages = new Meteor.Collection('minmessages');
-
-
-DrawKeepRunning = true;
 /**
  * Helper function to return a randomly generated color channel as int
  * @return {int} Random int between 0 and 256
@@ -60,14 +65,14 @@ if (Meteor.isClient) {
   * @pixels: subscribe ONLY to the pixels of a selected picture.
   */
  
-  Meteor.subscribe("minpictures");
-  Meteor.subscribe("minpixels", {p: Session.get("selected_picture")});
+  Meteor.subscribe("mrtpicturecollection");
+  Meteor.subscribe("mrtpixelcollection", {p: Session.get("selected_picture")});
 
   // Called on client-startup: If no picture selected, select one.
   Meteor.startup(function () {
     Deps.autorun(function () {
       if (! Session.get("selected_picture")) {
-        var picture = Minpictures.findOne();
+        var picture = MrtPictureCollection.findOne();
         if (picture)
           Session.set("selected_picture", picture._id);
       }
@@ -78,8 +83,8 @@ if (Meteor.isClient) {
    * Template pictures filler for all pictures (for each within template)
    * @return {Meteor.Collection.Cursor} all pictures within the meteor collection
    */
-  Template.overview.pictures = function () {
-    return Minpictures.find({});
+  Template.pictureOverviewDisplay.pictures = function () {
+    return MrtPictureCollection.find({});
   };
 
   /**
@@ -100,20 +105,20 @@ if (Meteor.isClient) {
   });
 
   /**
-   * Template pictureGridHolder filler for selected_picture. Gets Session and updates selected_picture in template
+   * Template pictureVisualization filler for selected_picture. Gets Session and updates selected_picture in template
    * @return {string} The name of the selected picture
    */
-  Template.pictureGridHolder.selected_picture = function () {
-    var pic = Minpictures.findOne(Session.get("selected_picture"));
+  Template.pictureVisualization.selected_picture = function () {
+    var pic = MrtPictureCollection.findOne(Session.get("selected_picture"));
     return pic && pic.name;
   };
 
   /**
-   * Template pictureGridSVG rendered function. Called when pictureGridSVG was successfully rendered the first time
+   * Template pictureVisualizationItemSVG rendered function. Called when pictureVisualizationItemSVG was successfully rendered the first time
    * Defines algorithms to be executed by Deps.autorun on Template Change / Datachange.
    */
-  Template.pictureGridSVG.rendered = function () {
-    console.log("Template.pictureGridSVG.rendered");
+  Template.pictureVisualizationItemSVG.rendered = function () {
+    console.log("Template.pictureVisualizationItemSVG.rendered");
     var self = this;
     self.node = self.find("svg");
 
@@ -121,7 +126,7 @@ if (Meteor.isClient) {
       
       // define a Dep.autorun for the Template, which automatically runs when changes happen
       self.handle = Deps.autorun(function (){
-        console.log("Template.pictureGridSVG.rendered: Deps.autorun");
+        console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun");
 
         /**
          * Init / Update on change
@@ -129,23 +134,23 @@ if (Meteor.isClient) {
          */
         var updateRaw = function (rect) {
 
-          console.log("Template.pictureGridSVG.rendered: Deps.autorun: updateRaw")
+          console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun: updateRaw")
 
-          rect.attr("x", function(d) { return (d.x) * Minpictures.findOne(d.picID).itemwidth; })
-            .attr("y", function(d) { return (d.y) * Minpictures.findOne(d.picID).itemheight; })
-            .attr("width", function(d) { return Minpictures.findOne(d.picID).itemwidth; })
-            .attr("height", function(d) { return Minpictures.findOne(d.picID).itemheight; })
+          rect.attr("x", function(d) { return (d.x) * MrtPictureCollection.findOne(d.picID).itemwidth; })
+            .attr("y", function(d) { return (d.y) * MrtPictureCollection.findOne(d.picID).itemheight; })
+            .attr("width", function(d) { return MrtPictureCollection.findOne(d.picID).itemwidth; })
+            .attr("height", function(d) { return MrtPictureCollection.findOne(d.picID).itemheight; })
             // .attr("rx", 6)
             // .attr("ry", 6)
             .style("fill", function(d) { return getStringEJSONColor(d.color); })
             // .style("stroke", '#555')
             .on('click', function(e) { // on click
                 console.log("click: _id=" + e._id);
-                Minpixels.update(e._id, {$set: {color: getRandomEJSONColor() }});
+                MrtPixelCollection.update(e._id, {$set: {color: getRandomEJSONColor() }});
              })
             .on('mouseover', function(e) { // on mouseover
                 console.log("mouseover: _id=" + e._id);
-                Minpixels.update(e._id, {$set: {color: getRandomEJSONColor() }});
+                MrtPixelCollection.update(e._id, {$set: {color: getRandomEJSONColor() }});
              })
              .on('mouseout', function() { // on mouseout
                 d3.select(this)
@@ -154,17 +159,16 @@ if (Meteor.isClient) {
         };
 
         // bind my pixel data to the g class .pixels 
-        var minpix = d3.select(self.node).select(".pixs").selectAll("rect")
-          .data(Minpixels.find({picID: Session.get("selected_picture")}).fetch(), 
+        var minpix = d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
+          .data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
             function (minpix) {return minpix._id; });
 
 
         // data update only triggers fill to refresh
-        if(DrawKeepRunning) {
-          updateRaw(minpix.enter().append("svg:rect"));
-        }
-        d3.select(self.node).select(".pixs").selectAll("rect")
-          .data(Minpixels.find({picID: Session.get("selected_picture")}).fetch(), 
+        updateRaw(minpix.enter().append("svg:rect"));
+        
+        d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
+          .data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
             function (minpix) {return minpix._id; })
           .style("fill", function(d) { return getStringEJSONColor(d.color); })
 
@@ -176,9 +180,9 @@ if (Meteor.isClient) {
   };
 
   /**
-   * Template pictureGridSVG destroyed function: Kills Deps.autorun handle when the Template is no longer needed.
+   * Template pictureVisualizationItemSVG destroyed function: Kills Deps.autorun handle when the Template is no longer needed.
    */
-  Template.pictureGridSVG.destroyed = function () {
+  Template.pictureVisualizationItemSVG.destroyed = function () {
     this.handle && this.handle.stop();
   };
 }
@@ -203,28 +207,38 @@ if (Meteor.isServer) {
   * @pixels: we define changed functions for pixels, as we want all users to manipulate them...
   */
 
-  Meteor.publish("minpictures", function () {
-    return Minpictures.find();
+  Meteor.publish("mrtpicturecollection", function () {
+    return MrtPictureCollection.find();
   });
 
-  Meteor.publish("minpixels", function () {
-    return Minpixels.find(); 
+  Meteor.publish("mrtpixelcollection", function () {
+    return MrtPixelCollection.find(); 
   });
 
-  Minpixels.allow({
+  MrtPixelCollection.allow({
     update: function (userId, doc, fields, modifier) {
-      // changes to color allowed!
-      return _.contains(fields, 'color');
-    }
+
+      // old value will be remembered in mrtPixelHistoryCollection...
+      // TODO: IMPLEMENT PIXEL HISTORY...
+
+      // update is allowed with proper parameter
+      return _.contains(fields, 'color') && 
+        EJSON.isBinary(doc.color) &&
+        doc.color.length === 3;
+    },
+
+    fetch: ['color']
   });
 
-  Minpixels.deny({
+  MrtPixelCollection.deny({
     update: function (userId, doc, fields, modifier) {
       // changes to x, y and pID denied!
       return _.contains(fields, 'x') || 
         _.contains(fields, 'y') || 
         _.contains(fields, 'picID');
-    }
+    },
+
+    fetch: ['x', 'y', 'picID']
   });
 
 
@@ -233,7 +247,7 @@ if (Meteor.isServer) {
    */
   Meteor.startup(function() {
       console.log("Meteor.startup");
-      if(Minpictures.find().count() === 0) {
+      if(MrtPictureCollection.find().count() === 0) {
         console.log("Meteor.startup: no pictures found, adding...");
 
         addTestPictureWithPixels("SmallPicture-FewPixels", 200, 200, 5, 5);
@@ -250,6 +264,25 @@ if (Meteor.isServer) {
       }
   });
 
+
+  addPixelHistoryFromPixel = function(pixID) {
+
+    // TODO MAKE UPDATING AND INSERTING PIXELS A SERVER SIDE FUNCTION AND DENY
+    // EVERYTHING FROM OUTSIDE!!! - also hide not needed things from outside
+    // e.g picID within pixels - make a specialized sort that returns the needed part!!!!
+    // 
+
+
+  };
+
+  insertPixelHistory = function(pixID, color) {
+    var currentHistoryIndex = MrtPixelHistoryCollection.find({pixID: pixID}).count();
+    MrtPixelHistoryCollection.insert({
+      pixID: pixID,
+      color: color
+    });
+  }
+
   /**
    * addTestPictureWithPixels defines a function to add a picture with the overgiven parameters to the collection. 
    * It also executes addPixels with the reference to the new generated picture
@@ -263,7 +296,7 @@ if (Meteor.isServer) {
     var gridItemWidth = gridWidth / rows;
     var gridItemHeight = (true) ? gridItemWidth : gridHeight / cols;
 
-    var picID = Minpictures.insert({
+    var picID = MrtPictureCollection.insert({
       width: gridWidth, 
       height: gridHeight, 
       itemwidth: gridItemWidth, 
@@ -279,21 +312,24 @@ if (Meteor.isServer) {
   };
 
   /**
-   * addPixels defines a function to fill an example grid with data --> Minpixels
+   * addPixels defines a function to fill an example grid with data --> MrtPixelCollection
    * @param  {int} rows               count of rows to generate --> x
    * @param  {int} cols               count of cols to generate --> y
    * @param  {string | objectID} pID  reference to picture --> picID
    */
   addPixels = function(rows, cols, picID) {
+    //var count = 0;
+
     for (var index_y = 0; index_y < rows; index_y++) {
       for (var index_x = 0; index_x < cols; index_x++) {
         
-        Minpixels.insert({
+        MrtPixelCollection.insert({
           x: index_x, 
           y: index_y, 
           color: getRandomEJSONColor(),
-          picID: picID
+          picID: picID,
         });
+        //count++;
       }
     }
     console.log("addPixels: added pixels for pID=" + picID + " rows=" + rows + " cols=" + cols);
