@@ -3,25 +3,27 @@
 </head>
 
 <body>
+  {{loginButtons}}
+
   {{> overview}}
-  {{> rawholder}}
+  {{> pictureGridHolder}}
 
   <footer>
     by <a href="http://www.majodev.com">majodev.com</a>
   </footer>
 </body>
 
-<template name="rawholder">
+<template name="pictureGridHolder">
   {{#if selected_picture}}
-    {{> rawpix}}
+    {{> pictureGridSVG}}
   {{/if}}
   {{#unless selected_picture}}
     <div class="none">Select a picture!</div>
   {{/unless}}
 </template>
 
-<template name="rawpix">
-  <div class="rawpix">
+<template name="pictureGridSVG">
+  <div class="pictureGridSVG">
     {{#constant}}
       <svg id="rawsvg" width="520" height="520" >
         <g class="pixs"></g>
