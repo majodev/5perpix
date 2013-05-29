@@ -5,25 +5,54 @@
 <body>
   {{loginButtons}}
 
-  {{> userInformationDisplay}}
   {{> pictureOverviewDisplay}}
+
+  {{> messageHolder}}
+
+  {{> userInformationDisplay}}
   {{> pictureVisualization}}
+  
 
   <footer>
     by <a href="http://www.majodev.com">majodev.com</a>
   </footer>
 </body>
 
-<template name="messagesHolder">
+<template name="messageHolder">
+  {{#if messageReference}}
 
+    {{#if currentUser}}
+      <div class="messageInformation">Logged in, allowed to post messages!</div>
+      {{> messageItemAdd}}
+    {{/if}}
+    {{#unless currentUser}}
+      <div class="messageInformation">Login to post own messages!</div>
+    {{/unless}}
+
+    {{> messageDisplay}}
+    
+  {{/if}}
+  {{#unless messageReference}}
+    <div class="messageInformation">Messages are disabled for this object!</div>
+  {{/unless}}
 </template>
 
-<template name="messagesDisplay">
-
+<template name="messageDisplay">
+  {{#each messages}}
+    {{> messageItem}}
+  {{/each}}
 </template>
 
 <template name="messageItem">
+  <div class="message"><span class="author">{{author}} [{{timestamp}}]:</span> {{text}}</div>
+</template>
 
+<template name="messageItemAdd">
+  <div class="messageItemAdd">
+    <label>Message:</label>
+    <input class="messageItemAddInput" />
+    <button class="messageItemAddButton">add</button>
+  </div>  
 </template>
 
 <!-- User Information -->
@@ -68,7 +97,6 @@
 </template>
 
 <template name="picture">
-  <!-- no space between div 'class' and 'handlebar' is intended! -->
   <div class="picture{{selected}}"> 
     <span class="name">{{name}}</span>
     <span class="id">{{_id}}</span>
