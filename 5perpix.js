@@ -115,7 +115,7 @@ if (Meteor.isClient) {
       messageReferenceID: MrtMessageReferenceCollection.findOne({
         targetID: Session.get("selected_picture")})._id}, {
         sort: {timestamp:-1}, 
-        limit: 5}
+        limit: 15}
       );
   }
 

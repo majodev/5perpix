@@ -22,25 +22,30 @@
   {{#if messageReference}}
 
     {{#if currentUser}}
-      <div class="messageInformation">Logged in, allowed to post messages!</div>
+      <div class="messageInformation">Logged in! You're allowed to post messages!</div>
       {{> messageItemAdd}}
     {{/if}}
     {{#unless currentUser}}
-      <div class="messageInformation">Login to post own messages!</div>
+      <div class="messageInformation">Login/Signin to post you own messages!</div>
     {{/unless}}
 
     {{> messageDisplay}}
     
   {{/if}}
   {{#unless messageReference}}
-    <div class="messageInformation">Messages are disabled for this object!</div>
+    <div class="messageInformation">Sorry! Messaging is disabled for this object!</div>
   {{/unless}}
 </template>
 
 <template name="messageDisplay">
-  {{#each messages}}
-    {{> messageItem}}
-  {{/each}}
+  <div class="messageDisplay">
+    <div class="messageDisplayHeaderHeader">Messages:</div>
+    <div class="messages">
+      {{#each messages}}
+        {{> messageItem}}
+      {{/each}}
+    </div>
+  </div>
 </template>
 
 <template name="messageItem">
@@ -61,7 +66,7 @@
     <div class="userInformation">Logged in! Let's smash these pixarts!</div>
   {{/if}}
   {{#unless currentUser}}
-    <div class="userInformation">Please login to smash these pixarts!</div>
+    <div class="userInformation">Login/Signin to smash these pixarts!</div>
   {{/unless}}
 </template>
 
@@ -78,6 +83,7 @@
 
 <template name="pictureVisualizationItemSVG">
   <div class="pictureVisualizationItemSVG">
+    <div class="pictureOverviewHeader">Picture Visualization as SVG:</div>
     {{#constant}}
       <svg id="pictureVisualizationItemSVGContainer" width="520" height="520" >
         <g class="pictureVisualizationItemSVGPixels"></g>
@@ -90,9 +96,12 @@
 
 <template name="pictureOverviewDisplay">
   <div class="pictureOverviewDisplay">
-    {{#each pictures}}
-      {{> picture}}
-    {{/each}}
+    <div class="pictureOverviewHeader">Pictures:</div>
+    <div class="pictures">
+      {{#each pictures}}
+        {{> picture}}
+      {{/each}}
+    </div>
   </div>
 </template>
 
