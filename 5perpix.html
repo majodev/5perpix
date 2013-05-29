@@ -35,7 +35,7 @@
       {{> messageDisplay}}
     {{/if}}
     {{#unless messageReference}}
-      <div class="messageInformationMessagingDisabled">Placeholder: No messageReference to show found.</div>
+      <div class="messageInformationMessagingDisabled">Placeholder messageHolder: No messageReference to show found.</div>
     {{/unless}}
   </div>
 </template>
@@ -57,8 +57,9 @@
 
 <template name="messageItem">
   <div class="messageItem">
-    <div class="message"
-    <span class="author">{{author}} [{{timestamp}}]:</span> {{text}}
+    <div class="message">
+      <span class="PROTOTYPE_ONLY_HACK">--</span>  
+      <span class="author">{{author}} [{{timestamp}}]:</span> {{text}}
   </div>
 </template>
 
@@ -79,17 +80,17 @@
     {{> pictureVisualization}}
   {{/if}}
   {{#unless selected_picture}}
-    <div class="messageInformationMessagingDisabled">Placeholder: No picture to visualize found.</div>
+    <div class="messageInformationMessagingDisabled">Placeholder pictureVisualizationHolder: No picture to visualize found.</div>
   {{/unless}}
 </template>
 
 <template name="pictureInformationDisplay">
   <div class="pictureInformationDisplay">
     {{#if currentUser}}
-      <div class="pictureInformationUserLoggedIn">Picture (signed in! let's smash pix):</div>
+      <div class="pictureInformationUserLoggedIn">Picture (signed in! let's change pixels permanently):</div>
     {{/if}}
     {{#unless currentUser}}
-      <div class="pictureInformationUserLoggedOut">Picture (sign in to smash pix):</div>
+      <div class="pictureInformationUserLoggedOut">Picture (sign in to change pixels permanently):</div>
     {{/unless}}
   </div>
 </template>
@@ -124,7 +125,8 @@
 </template>
 
 <template name="picture">
-  <div class="picture{{selected}}"> 
+  <div class="picture{{selected}}">
+    <span class="PROTOTYPE_ONLY_HACK">--</span>
     <span class="name">{{name}}</span>
     <span class="id">{{_id}}</span>
     <span class="width">{{width}}</span>
