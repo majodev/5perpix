@@ -5,7 +5,7 @@
 MrtPixelCollection = new Meteor.Collection('mrtpixelcollection');
 
 
-MrtPixelHistoryCollection = new Meteor.Collection('mrtpixelhistorycollection');
+//MrtPixelHistoryCollection = new Meteor.Collection('mrtpixelhistorycollection');
 
 
 /**
@@ -74,15 +74,6 @@ if (Meteor.isClient) {
 
   // Called on client-startup: If no picture selected, select one.
   Meteor.startup(function () {
-    // Deps.autorun(function () {
-    //   if (! Session.get("selected_picture")) {
-    //     var picture = MrtPictureCollection.findOne();
-    //     if (picture) {
-    //       Session.set("selected_picture", picture._id);
-    //     }
-          
-    //   }
-    // });
   });
 
 
@@ -108,7 +99,7 @@ if (Meteor.isClient) {
     }, function() {
       template.find(".messageItemAddInput").value = "";
     });
-  }
+  };
 
   Template.messageDisplay.messages = function () {
     return MrtMessageCollection.find({
@@ -117,13 +108,19 @@ if (Meteor.isClient) {
         sort: {timestamp:-1}, 
         limit: 15}
       );
-  }
+  };
 
   Template.messageHolder.messageReference = function () {
     return MrtMessageReferenceCollection.findOne(
       {targetID: Session.get("selected_picture")}
       );
-  }
+  };
+
+  Template.messageDisplay.messagesFound = function () {
+    return MrtMessageCollection.findOne({
+      messageReferenceID: MrtMessageReferenceCollection.findOne({
+        targetID: Session.get("selected_picture")})._id});
+  };
 
   /**
    * Template pictures filler for all pictures (for each within template)
@@ -151,10 +148,10 @@ if (Meteor.isClient) {
   });
 
   /**
-   * Template pictureVisualization filler for selected_picture. Gets Session and updates selected_picture in template
+   * Template pictureVisualizationHolder filler for selected_picture. Gets Session and updates selected_picture in template
    * @return {string} The name of the selected picture
    */
-  Template.pictureVisualization.selected_picture = function () {
+  Template.pictureVisualizationHolder.selected_picture = function () {
     var pic = MrtPictureCollection.findOne(Session.get("selected_picture"));
     return pic && pic.name;
   };
@@ -264,10 +261,6 @@ if (Meteor.isServer) {
 
   MrtPixelCollection.allow({
     update: function (userId, doc, fields, modifier) {
-
-      // old value will be remembered in mrtPixelHistoryCollection...
-      // TODO: IMPLEMENT PIXEL HISTORY...
-
       // update is allowed with proper parameter
       return _.contains(fields, 'color') && 
         EJSON.isBinary(doc.color) &&
@@ -305,7 +298,7 @@ if (Meteor.isServer) {
    * Called on server-startup to fill some example pictures and pixels to our Collections if nothing exists
    */
   Meteor.startup(function() {
-    // hack: always reset.
+    // STARTUP test content server hack: always reset.
     //if(MrtPictureCollection.find().count() < 1) {
       console.log("Meteor.startup: removing old documents from collections...");
       resetAllMrtCollections();
@@ -313,7 +306,7 @@ if (Meteor.isServer) {
   });
 
   resetAllMrtCollections = function() {
-    MrtPixelHistoryCollection.remove({}, function() {
+    //MrtPixelHistoryCollection.remove({}, function() {
       MrtPixelCollection.remove({}, function() {
         MrtMessageCollection.remove({}, function() {
           MrtPictureCollection.remove({}, function() {
@@ -321,57 +314,9 @@ if (Meteor.isServer) {
             addTestData();
           })
         })
-      })
-    });
+      });
+    //});
   };
-
-  // referenceMessageWithTarget = function(target_id, target_type) {
-  //   if(target_type === "pic") {
-  //     if(MrtMessageReferenceCollection.findOne(target_id: target_id, target_type: target_type).count === 0) {
-  //       console.log("addMessageReferenceForPicture: catched an insert reference to picture that already existed! picID=" + picID);
-  //       return addMessageReference(target_id, target_type);
-  //     } else {
-  //       console.log("addMessageReferenceForPicture: reference to targetID=" + target_id + " alredy exists!, target_type=" + target_type);
-  //       return getMessageReference(target_id, target_type);
-  //     }
-  //   }
-
-  // }
-
-  // function addMessageReference(target_id, target_type) {
-  //   referenceID = MrtMessageReferenceCollection.insert({
-  //     target_id: picID, 
-  //     target_type: "pic"
-  //   });
-  // }
-
-  // addPixelHistoryToPixel = function(pixID) {
-
-  //   // TODO MAKE UPDATING AND INSERTING PIXELS A SERVER SIDE FUNCTION AND DENY
-  //   // EVERYTHING FROM OUTSIDE!!! - also hide not needed things from outside
-  //   // e.g picID within pixels - make a specialized sort that returns the needed part!!!!
-  //   // 
-  // };
-
-  // insertPixelHistory = function(pixID, color) {
-  //   var currentHistoryIndex = MrtPixelHistoryCollection.find({pixID: pixID}).count();
-  //   MrtPixelHistoryCollection.insert({
-  //     pixID: pixID,
-  //     color: color
-  //   });
-  // }
-  // 
-
-  /**
-   * addTestPictureWithPixels defines a function to add a picture with the overgiven parameters to the collection. 
-   * It also executes addPixels with the reference to the new generated picture
-   * @param  {string} name        name of the picture
-   * @param  {number} gridWidth   width of the picture
-   * @param  {number} gridHeight  height of the picture
-   * @param  {int} rows           number of pixel rows
-   * @param  {int} cols           number of pixel colums
-   */
-  
 
    /**
     * Server only
@@ -387,14 +332,8 @@ if (Meteor.isServer) {
       addTestPictureWithPixels("MediumPicture-FewPixels", 350, 350, 5, 5), "b");
     addTestReferencesAndMessages(
       addTestPictureWithPixels("BigPicture-FewPixels", 500, 500, 5, 5), "c");
-
-    //addTestPictureWithPixels("SmallPicture-MediumPixels", 200, 200, 12, 12);
     addTestReferencesAndMessages(
       addTestPictureWithPixels("MediumPicture-MediumPixels", 350, 350, 12, 12), null);
-    //addTestPictureWithPixels("BigPicture-MediumPixels", 500, 500, 12, 12);
-
-    //addTestPictureWithPixels("SmallPicture-ManyPixels", 200, 200, 20, 20);
-    //addTestPictureWithPixels("MediumPicture-ManyPixels", 350, 350, 20, 20);
     addTestReferencesAndMessages(
       addTestPictureWithPixels("BigPicture-ManyPixels", 500, 500, 20, 20), null);
   }
@@ -475,7 +414,6 @@ if (Meteor.isServer) {
    * @param  {string | objectID} pID  reference to picture --> picID
    */
   addPixels = function(rows, cols, picID) {
-    //var count = 0;
 
     for (var index_y = 0; index_y < rows; index_y++) {
       for (var index_x = 0; index_x < cols; index_x++) {
@@ -487,7 +425,6 @@ if (Meteor.isServer) {
           picID: picID,
           userID: "SERVER"
         });
-        //count++;
       }
     }
     console.log("addPixels: added pixels for pID=" + picID + " rows=" + rows + " cols=" + cols);

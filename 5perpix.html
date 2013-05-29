@@ -3,53 +3,63 @@
 </head>
 
 <body>
+  {{> pageInformation}}
   {{loginButtons}}
-
   {{> pictureOverviewDisplay}}
-
   {{> messageHolder}}
-
-  {{> userInformationDisplay}}
-  {{> pictureVisualization}}
-  
-
+  {{> pictureVisualizationHolder}}
   <footer>
     by <a href="http://www.majodev.com">majodev.com</a>
   </footer>
 </body>
 
+
+<template name="pageInformation">
+  <div class="pageInformation">
+    <div class="pageInformationHeader">Welcome to 5perpix, initial prototype.</div>
+  </div>
+</template>
+
+<!-- Messages -->
+
 <template name="messageHolder">
-  {{#if messageReference}}
-
-    {{#if currentUser}}
-      <div class="messageInformation">Logged in! You're allowed to post messages!</div>
-      {{> messageItemAdd}}
+  <div class="messageHolder">
+    {{#if messageReference}}
+      {{#if currentUser}}
+        <div class="messageInformationUserLoggedIn">Messages: (signed in! allowed to post messages):</div>
+        {{> messageItemAdd}}
+      {{/if}}
+      {{#unless currentUser}}
+        <div class="messageInformationUserLoggedOut">Messages: (sign in to post your own messages):</div>
+      {{/unless}}
+      {{> messageDisplay}}
     {{/if}}
-    {{#unless currentUser}}
-      <div class="messageInformation">Login/Signin to post you own messages!</div>
+    {{#unless messageReference}}
+      <div class="messageInformationMessagingDisabled">Placeholder: No messageReference to show found.</div>
     {{/unless}}
-
-    {{> messageDisplay}}
-    
-  {{/if}}
-  {{#unless messageReference}}
-    <div class="messageInformation">Sorry! Messaging is disabled for this object!</div>
-  {{/unless}}
+  </div>
 </template>
 
 <template name="messageDisplay">
   <div class="messageDisplay">
-    <div class="messageDisplayHeaderHeader">Messages:</div>
-    <div class="messages">
-      {{#each messages}}
-        {{> messageItem}}
-      {{/each}}
-    </div>
+    {{#unless messagesFound}}
+        <div class="messagesNothingFound">Be the first to leave a message!</div>
+    {{/unless}}
+    {{#if messagesFound}}
+      <div class="messages">
+        {{#each messages}}
+          {{> messageItem}}
+        {{/each}}
+      </div>
+    {{/if}}
   </div>
 </template>
 
 <template name="messageItem">
-  <div class="message"><span class="author">{{author}} [{{timestamp}}]:</span> {{text}}</div>
+  <div class="messageItem">
+    <div class="message"
+    <span class="author">{{author}} [{{timestamp}}]:</span> {{text}}
+  </div>
 </template>
 
 <template name="messageItemAdd">
@@ -60,30 +70,38 @@
   </div>  
 </template>
 
-<!-- User Information -->
-<template name="userInformationDisplay">
-  {{#if currentUser}}
-    <div class="userInformation">Logged in! Let's smash these pixarts!</div>
-  {{/if}}
-  {{#unless currentUser}}
-    <div class="userInformation">Login/Signin to smash these pixarts!</div>
-  {{/unless}}
-</template>
 
 <!-- Picture Visualization -->
 
-<template name="pictureVisualization">
+<template name="pictureVisualizationHolder">
   {{#if selected_picture}}
-    {{> pictureVisualizationItemSVG}}
+    {{> pictureInformationDisplay}}
+    {{> pictureVisualization}}
   {{/if}}
   {{#unless selected_picture}}
-    <div class="pictureInformation">Select a picture!</div>
+    <div class="messageInformationMessagingDisabled">Placeholder: No picture to visualize found.</div>
   {{/unless}}
+</template>
+
+<template name="pictureInformationDisplay">
+  <div class="pictureInformationDisplay">
+    {{#if currentUser}}
+      <div class="pictureInformationUserLoggedIn">Picture (signed in! let's smash pix):</div>
+    {{/if}}
+    {{#unless currentUser}}
+      <div class="pictureInformationUserLoggedOut">Picture (sign in to smash pix):</div>
+    {{/unless}}
+  </div>
+</template>
+
+<template name="pictureVisualization">
+  <div class="pictureVisualization">
+    {{> pictureVisualizationItemSVG}}
+  </div>
 </template>
 
 <template name="pictureVisualizationItemSVG">
   <div class="pictureVisualizationItemSVG">
-    <div class="pictureOverviewHeader">Picture Visualization as SVG:</div>
     {{#constant}}
       <svg id="pictureVisualizationItemSVGContainer" width="520" height="520" >
         <g class="pictureVisualizationItemSVGPixels"></g>
@@ -96,7 +114,7 @@
 
 <template name="pictureOverviewDisplay">
   <div class="pictureOverviewDisplay">
-    <div class="pictureOverviewHeader">Pictures:</div>
+    <div class="pictureOverviewHeader">Pictures (click to select):</div>
     <div class="pictures">
       {{#each pictures}}
         {{> picture}}
