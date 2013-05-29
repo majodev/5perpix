@@ -3,9 +3,9 @@
 </head>
 
 <body>
-  {{> pageInformation}}
+  {{> pageInformationHolder}}
   {{loginButtons}}
-  {{> pictureOverviewDisplay}}
+  {{> pictureOverviewHolder}}
   {{> messageHolder}}
   {{> pictureVisualizationHolder}}
   <footer>
@@ -14,9 +14,9 @@
 </body>
 
 
-<template name="pageInformation">
-  <div class="pageInformation">
-    <div class="pageInformationHeader">Welcome to 5perpix, initial prototype.</div>
+<template name="pageInformationHolder">
+  <div class="pageInformationHolder">
+    <div class="pageInformationHolderHeader">Welcome to 5perpix, initial prototype.</div>
   </div>
 </template>
 
@@ -112,6 +112,17 @@
 </template>
 
 <!-- Pictures Overview -->
+
+<template name="pictureOverviewHolder">
+  <div class="pictureOverviewHolder">
+    {{#if picturesFound}}
+      {{> pictureOverviewDisplay}}
+    {{/if}}
+    {{#unless picturesFound}}
+      <div class="pictureOverviewHolderNoPicturesFound">Placeholder pictureOverviewHolder: No pictures for overview found.</div>
+    {{/unless}}
+  </div>
+</template>
 
 <template name="pictureOverviewDisplay">
   <div class="pictureOverviewDisplay">

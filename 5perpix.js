@@ -71,6 +71,8 @@ if (Meteor.isClient) {
  
   Meteor.subscribe("mrtpicturecollection");
   Meteor.subscribe("mrtpixelcollection", {p: Session.get("selected_picture")});
+  Meteor.subscribe("mrtmessagereferencecollection");
+  Meteor.subscribe("mrtmessagecollection");
 
   // Called on client-startup: If no picture selected, select one.
   Meteor.startup(function () {
@@ -113,7 +115,7 @@ if (Meteor.isClient) {
   Template.messageHolder.messageReference = function () {
     return MrtMessageReferenceCollection.findOne(
       {targetID: Session.get("selected_picture")}
-      );
+    );
   };
 
   Template.messageDisplay.messagesFound = function () {
@@ -128,6 +130,10 @@ if (Meteor.isClient) {
    */
   Template.pictureOverviewDisplay.pictures = function () {
     return MrtPictureCollection.find({});
+  };
+
+  Template.pictureOverviewHolder.picturesFound = function () {
+    return MrtPictureCollection.findOne();
   };
 
   /**
@@ -257,6 +263,20 @@ if (Meteor.isServer) {
 
   Meteor.publish("mrtpixelcollection", function () {
     return MrtPixelCollection.find(); 
+  });
+
+  Meteor.publish("mrtmessagecollection", function () {
+    return MrtMessageCollection.find(); 
+  });
+
+  Meteor.publish("mrtmessagereferencecollection", function () {
+    return MrtMessageReferenceCollection.find(); 
+  });
+
+  MrtMessageCollection.allow({
+    insert: function(userId, doc) {
+      return true;
+    }
   });
 
   MrtPixelCollection.allow({
