@@ -1,9 +1,13 @@
 /**
- * Meteor Collection Pixels, clients subscribe to pixels on picture (p)
- * @type {Meteor.Collection}
- */
+ 	* Meteor Collection Pixels, clients subscribe to pixels on picture (p)
+ 	* @type {Meteor.Collection}
+ 	*/
 MrtPixelCollection = new Meteor.Collection('mrtpixelcollection');
 
+
+/** CRUD-restrictions (create, read, update, delete):
+	@pixels: we define changed functions for pixels, as we want all users to manipulate them...
+	*/
 MrtPixelCollection.allow({
 	update: function (userId, doc, fields, modifier) {
 		// update is allowed with proper parameter

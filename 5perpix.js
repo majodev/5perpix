@@ -198,7 +198,7 @@ if (Meteor.isClient) {
 
 				// kill pixel on remove from data source
 				minpix.exit().remove();
-
+				
 			});
 		}
 	};
@@ -217,35 +217,7 @@ if (Meteor.isClient) {
  */
 if (Meteor.isServer) {
 
-	/**
-	* Publish behaviour and CRUD on server
-	* package autopublish was removed from meteor: we need to define our own publish and subscribe behaviour!
-	* package insecure was removed from meteor: we need to define the allowed actions on the data (pictures and pixels)
-	*
-	* sum-up:
-	* @pictures: always publish all pictures to all users. 
-	* @pixels: always publish all pixels of all pictures! (client will only subscribe to the pixels it currently needs!).
-	*
-	* CRUD-restrictions (create, read, update, delete):
-	* @pictures: we don't define insert / change or removed functions for subscribed pictures as we don't want to allow manipulation on the clientside!
-	* @pixels: we define changed functions for pixels, as we want all users to manipulate them...
-	*/
-
-	Meteor.publish("mrtpicturecollection", function () {
-		return MrtPictureCollection.find();
-	});
-
-	Meteor.publish("mrtpixelcollection", function () {
-		return MrtPixelCollection.find(); 
-	});
-
-	Meteor.publish("mrtmessagecollection", function () {
-		return MrtMessageCollection.find(); 
-	});
-
-	Meteor.publish("mrtmessagereferencecollection", function () {
-		return MrtMessageReferenceCollection.find(); 
-	});
+	
 
 
 	/**
