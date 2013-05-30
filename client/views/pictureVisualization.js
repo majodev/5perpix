@@ -51,11 +51,11 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 					// .style("stroke", '#555')
 					.on('click', function(e) { // on click
 							//console.log("click: _id=" + e._id);
-							Meteor.call('changePixelColor', e.picID, e._id, function (error, result) { console.log("error=" + error + " result=" + result) });
+							Meteor.call('changePixelColor', e.picID, e._id, getRandomEJSONColor(), function (error, result) { console.log("error=" + error + " result=" + result) });
 					 })
 					.on('mouseover', function(e) { // on mouseover
 							//console.log("mouseover: _id=" + e._id);
-							Meteor.call('changePixelColor', e.picID, e._id, function (error, result) { console.log("error=" + error + " result=" + result) });
+							Meteor.call('changePixelColor', e.picID, e._id, getRandomEJSONColor(), function (error, result) { console.log("error=" + error + " result=" + result) });
 					 })
 					 .on('mouseout', function() { // on mouseout
 							d3.select(this)
@@ -65,7 +65,8 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 
 			// bind my pixel data to the g class .pixels 
 			var minpix = d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
-				.data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
+				.data(MrtPixelCollection.find({
+					picID: Session.get("selected_picture")}).fetch(), 
 					function (minpix) {return minpix._id; });
 
 
@@ -83,16 +84,3 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 		});
 	}
 };
-
-
-/**
- * Helper function to parse a color as EJSON binaray Uint8Array containing rgb-channels. rgb is automatically appended for use in fillstyle, fill, ...
- * @param  {Uint8Array} colorEJSON, a color in EJSON binary Uint8Array format
- * @return {string} a string of rgb-colors for use in fill, fillstyle, ...
- */
-function getStringEJSONColor(colorEJSON) {
-	return "rgb(" 
-		+ colorEJSON[0] + "," 
-		+ colorEJSON[1] + "," 
-		+ colorEJSON[2] + ")";
-}
