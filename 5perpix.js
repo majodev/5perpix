@@ -53,16 +53,7 @@ if (Meteor.isClient) {
 	});
 
 
-	Template.messageItemAdd.events({
-		'click button.messageItemAddButton': function (event, template) {
-			addMessage(event, template);
-		},
-		'keypress input.messageItemAddInput': function (event, template) {
-			if(event.keyCode == 13){
-				addMessage(event, template);
-			}
-		}
-	});
+	
 
 	addMessage = function (event, template) {
 		MrtMessageCollection.insert({
@@ -77,138 +68,78 @@ if (Meteor.isClient) {
 		});
 	};
 
-	Template.messageDisplay.messages = function () {
-		return MrtMessageCollection.find({
-			messageReferenceID: MrtMessageReferenceCollection.findOne({
-				targetID: Session.get("selected_picture")})._id}, {
-				sort: {timestamp:-1}, 
-				limit: 15}
-			);
-	};
-
-	Template.messageHolder.messageReference = function () {
-		return MrtMessageReferenceCollection.findOne(
-			{targetID: Session.get("selected_picture")}
-		);
-	};
-
-	Template.messageDisplay.messagesFound = function () {
-		return MrtMessageCollection.findOne({
-			messageReferenceID: MrtMessageReferenceCollection.findOne({
-				targetID: Session.get("selected_picture")})._id});
-	};
-
-	/**
-	 * Template pictures filler for all pictures (for each within template)
-	 * @return {Meteor.Collection.Cursor} all pictures within the meteor collection
-	 */
-	Template.pictureOverviewDisplay.pictures = function () {
-		return MrtPictureCollection.find({});
-	};
-
-	Template.pictureOverviewHolder.picturesFound = function () {
-		return MrtPictureCollection.findOne();
-	};
-
-	/**
-	 * Template picture filler for div class picture. selected is appended to the picture class while this picture is selected...
-	 * @return {string} emptystring or 'selected'
-	 */
-	Template.picture.selected = function () { // adds 'selected' to class...
-		return Session.equals("selected_picture", this._id) ? " selected" : '';
-	};
-
-	/**
-	 * Template Event Handler for clicking on a picture within the picture template
-	 */
-	Template.picture.events({
-		'click': function () {
-			Session.set("selected_picture", this._id);
-		}
-	});
-
-	/**
-	 * Template pictureVisualizationHolder filler for selected_picture. Gets Session and updates selected_picture in template
-	 * @return {string} The name of the selected picture
-	 */
-	Template.pictureVisualizationHolder.selected_picture = function () {
-		var pic = MrtPictureCollection.findOne(Session.get("selected_picture"));
-		return pic && pic.name;
-	};
 
 
 	/**
-	 * Template pictureVisualizationItemSVG rendered function. Called when pictureVisualizationItemSVG was successfully rendered the first time
-	 * Defines algorithms to be executed by Deps.autorun on Template Change / Datachange.
-	 */
-	Template.pictureVisualizationItemSVG.rendered = function () {
-		console.log("Template.pictureVisualizationItemSVG.rendered");
-		var self = this;
-		self.node = self.find("svg");
+ * Template pictureVisualizationItemSVG rendered function. Called when pictureVisualizationItemSVG was successfully rendered the first time
+ * Defines algorithms to be executed by Deps.autorun on Template Change / Datachange.
+ */
+Template.pictureVisualizationItemSVG.rendered = function () {
+	console.log("Template.pictureVisualizationItemSVG.rendered");
+	var self = this;
+	self.node = self.find("svg");
 
-		if(! self.handle) {
-			
-			// define a Dep.autorun for the Template, which automatically runs when changes happen
-			self.handle = Deps.autorun(function (){
-				console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun");
+	if(! self.handle) {
+		
+		// define a Dep.autorun for the Template, which automatically runs when changes happen
+		self.handle = Deps.autorun(function (){
+			console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun");
 
-				/**
-				 * Init / Update on change
-				 * @param  {svg:rect} Needs d3.js rects as parameter.
-				 */
-				var updateRaw = function (rect) {
+			/**
+			 * Init / Update on change
+			 * @param  {svg:rect} Needs d3.js rects as parameter.
+			 */
+			var updateRaw = function (rect) {
 
-					console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun: updateRaw")
+				console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun: updateRaw")
 
-					rect.attr("x", function(d) { return (d.x) * MrtPictureCollection.findOne(d.picID).itemwidth; })
-						.attr("y", function(d) { return (d.y) * MrtPictureCollection.findOne(d.picID).itemheight; })
-						.attr("width", function(d) { return MrtPictureCollection.findOne(d.picID).itemwidth; })
-						.attr("height", function(d) { return MrtPictureCollection.findOne(d.picID).itemheight; })
-						// .attr("rx", 6)
-						// .attr("ry", 6)
-						.style("fill", function(d) { return getStringEJSONColor(d.color); })
-						// .style("stroke", '#555')
-						.on('click', function(e) { // on click
-								console.log("click: _id=" + e._id);
-								MrtPixelCollection.update(e._id, {$set: {color: getRandomEJSONColor() }});
-						 })
-						.on('mouseover', function(e) { // on mouseover
-								console.log("mouseover: _id=" + e._id);
-								MrtPixelCollection.update(e._id, {$set: {color: getRandomEJSONColor() }});
-						 })
-						 .on('mouseout', function() { // on mouseout
-								d3.select(this)
-										.style("fill", function(d) { return getStringEJSONColor(d.color); });
-						 });
-				};
-
-				// bind my pixel data to the g class .pixels 
-				var minpix = d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
-					.data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
-						function (minpix) {return minpix._id; });
-
-
-				// data update only triggers fill to refresh
-				updateRaw(minpix.enter().append("svg:rect"));
-				
-				d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
-					.data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
-						function (minpix) {return minpix._id; })
+				rect.attr("x", function(d) { return (d.x) * MrtPictureCollection.findOne(d.picID).itemwidth; })
+					.attr("y", function(d) { return (d.y) * MrtPictureCollection.findOne(d.picID).itemheight; })
+					.attr("width", function(d) { return MrtPictureCollection.findOne(d.picID).itemwidth; })
+					.attr("height", function(d) { return MrtPictureCollection.findOne(d.picID).itemheight; })
+					// .attr("rx", 6)
+					// .attr("ry", 6)
 					.style("fill", function(d) { return getStringEJSONColor(d.color); })
+					// .style("stroke", '#555')
+					.on('click', function(e) { // on click
+							console.log("click: _id=" + e._id);
+							MrtPixelCollection.update(e._id, {$set: {color: getRandomEJSONColor() }});
+					 })
+					.on('mouseover', function(e) { // on mouseover
+							console.log("mouseover: _id=" + e._id);
+							MrtPixelCollection.update(e._id, {$set: {color: getRandomEJSONColor() }});
+					 })
+					 .on('mouseout', function() { // on mouseout
+							d3.select(this)
+									.style("fill", function(d) { return getStringEJSONColor(d.color); });
+					 });
+			};
 
-				// kill pixel on remove from data source
-				minpix.exit().remove();
-				
-			});
-		}
-	};
+			// bind my pixel data to the g class .pixels 
+			var minpix = d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
+				.data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
+					function (minpix) {return minpix._id; });
 
-	/**
-	 * Template pictureVisualizationItemSVG destroyed function: Kills Deps.autorun handle when the Template is no longer needed.
-	 */
-	Template.pictureVisualizationItemSVG.destroyed = function () {
-		this.handle && this.handle.stop();
-	};
+
+			// data update only triggers fill to refresh
+			updateRaw(minpix.enter().append("svg:rect"));
+			
+			d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
+				.data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
+					function (minpix) {return minpix._id; })
+				.style("fill", function(d) { return getStringEJSONColor(d.color); })
+
+			// kill pixel on remove from data source
+			minpix.exit().remove();
+			
+		});
+	}
+};
+
+	
+
+
+	
 }
 
 

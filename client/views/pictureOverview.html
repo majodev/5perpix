@@ -1,0 +1,33 @@
+<template name="pictureOverviewHolder">
+	<div class="pictureOverviewHolder">
+		{{#if picturesFound}}
+			{{> pictureOverviewDisplay}}
+		{{/if}}
+		{{#unless picturesFound}}
+			<div class="pictureOverviewHolderNoPicturesFound">Placeholder pictureOverviewHolder: No pictures for overview found.</div>
+		{{/unless}}
+	</div>
+</template>
+
+<template name="pictureOverviewDisplay">
+	<div class="pictureOverviewDisplay">
+		<div class="pictureOverviewHeader">Pictures (click to select):</div>
+		<div class="pictures">
+			{{#each pictures}}
+				{{> picture}}
+			{{/each}}
+		</div>
+	</div>
+</template>
+
+<template name="picture">
+	<div class="picture{{selected}}">
+		<span class="PROTOTYPE_ONLY_HACK">--</span>
+		<span class="name">{{name}}</span>
+		<span class="id">{{_id}}</span>
+		<span class="width">{{width}}</span>
+		<span class="height">{{height}}</span>
+		<span class="rows">{{rows}}</span>
+		<span class="cols">{{cols}}</span>
+	</div>
+</template>

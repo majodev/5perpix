@@ -1,0 +1,36 @@
+<template name="pictureVisualizationHolder">
+	{{#if selected_picture}}
+		{{> pictureInformationDisplay}}
+		{{> pictureVisualization}}
+	{{/if}}
+	{{#unless selected_picture}}
+		<div class="messageInformationMessagingDisabled">Placeholder pictureVisualizationHolder: No picture to visualize found.</div>
+	{{/unless}}
+</template>
+
+<template name="pictureInformationDisplay">
+	<div class="pictureInformationDisplay">
+		{{#if currentUser}}
+			<div class="pictureInformationUserLoggedIn">Picture (signed in! let's change pixels permanently):</div>
+		{{/if}}
+		{{#unless currentUser}}
+			<div class="pictureInformationUserLoggedOut">Picture (sign in to change pixels permanently):</div>
+		{{/unless}}
+	</div>
+</template>
+
+<template name="pictureVisualization">
+	<div class="pictureVisualization">
+		{{> pictureVisualizationItemSVG}}
+	</div>
+</template>
+
+<template name="pictureVisualizationItemSVG">
+	<div class="pictureVisualizationItemSVG">
+		{{#constant}}
+			<svg id="pictureVisualizationItemSVGContainer" width="520" height="520" >
+				<g class="pictureVisualizationItemSVGPixels"></g>
+			</svg>
+		{{/constant}}
+	</div>
+</template>

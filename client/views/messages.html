@@ -1,0 +1,48 @@
+<template name="messageHolder">
+	<div class="messageHolder">
+		{{#if messageReference}}
+			{{#if currentUser}}
+				<div class="messageInformationUserLoggedIn">Messages: (signed in! allowed to post messages):</div>
+				{{> messageItemAdd}}
+			{{/if}}
+			{{#unless currentUser}}
+				<div class="messageInformationUserLoggedOut">Messages: (sign in to post your own messages):</div>
+			{{/unless}}
+			{{> messageDisplay}}
+		{{/if}}
+		{{#unless messageReference}}
+			<div class="messageInformationMessagingDisabled">Placeholder messageHolder: No messageReference to show found.</div>
+		{{/unless}}
+	</div>
+</template>
+
+<template name="messageDisplay">
+	<div class="messageDisplay">
+		{{#unless messagesFound}}
+				<div class="messagesNothingFound">Be the first to leave a message!</div>
+		{{/unless}}
+		{{#if messagesFound}}
+			<div class="messages">
+				{{#each messages}}
+					{{> messageItem}}
+				{{/each}}
+			</div>
+		{{/if}}
+	</div>
+</template>
+
+<template name="messageItem">
+	<div class="messageItem">
+		<div class="message">
+			<span class="PROTOTYPE_ONLY_HACK">--</span>  
+			<span class="author">{{author}} [{{timestamp}}]:</span> {{text}}
+	</div>
+</template>
+
+<template name="messageItemAdd">
+	<div class="messageItemAdd">
+		<label>Message:</label>
+		<input class="messageItemAddInput" />
+		<button class="messageItemAddButton">add</button>
+	</div>  
+</template>
