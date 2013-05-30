@@ -1,20 +1,14 @@
 Template.messageItemAdd.events({
 	'click button.messageItemAddButton': function (event, template) {
-		//addMessage(event, template);
-		Meteor.call(
-			'addMessage', 
-			template.find(".messageItemAddInput").value, 
-			MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id
-		);
+		precheckMethodAddMessage(template.find(".messageItemAddInput").value,
+				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id);
+			template.find(".messageItemAddInput").value = "";
 	},
 	'keypress input.messageItemAddInput': function (event, template) {
 		if(event.keyCode == 13){
-			//addMessage(event, template);
-			Meteor.call(
-				'addMessage', 
-				template.find(".messageItemAddInput").value, 
-				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id
-			);
+			precheckMethodAddMessage(template.find(".messageItemAddInput").value,
+				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id);
+			template.find(".messageItemAddInput").value = "";
 		}
 	}
 });	
@@ -39,6 +33,22 @@ Template.messageDisplay.messagesFound = function () {
 		messageReferenceID: MrtMessageReferenceCollection.findOne({
 			targetID: Session.get("selected_picture")})._id});
 };
+
+precheckMethodAddMessage = function (message, targetID) {
+	if(message )
+	Meteor.call('addMessage', 
+		message, 
+		targetID, 
+		function (error, result) {
+			if(error) {
+				console.log("precheckMethodAddMessage (callback): update failed. error=" + error);
+			}
+			if(result) {
+				console.log("precheckMethodAddMessage (callback): update success. result=" + result);
+			}
+		}
+	);
+}
 
 // addMessage = function (event, template) {
 // 	MrtMessageCollection.insert({
