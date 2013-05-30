@@ -50,16 +50,14 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 					.style("fill", function(d) { return getStringEJSONColor(d.color); })
 					// .style("stroke", '#555')
 					.on('click', function(e) { // on click
-							//console.log("click: _id=" + e._id);
-							Meteor.call('changePixelColor', e.picID, e._id, getRandomEJSONColor(), function (error, result) { console.log("error=" + error + " result=" + result) });
+						precheckChangePixelColor(e.picID, e._id, getRandomEJSONColor());
 					 })
 					.on('mouseover', function(e) { // on mouseover
-							//console.log("mouseover: _id=" + e._id);
-							Meteor.call('changePixelColor', e.picID, e._id, getRandomEJSONColor(), function (error, result) { console.log("error=" + error + " result=" + result) });
+						precheckChangePixelColor(e.picID, e._id, getRandomEJSONColor());
 					 })
-					 .on('mouseout', function() { // on mouseout
-							d3.select(this)
-									.style("fill", function(d) { return getStringEJSONColor(d.color); });
+					.on('mouseout', function() { // on mouseout
+						d3.select(this)
+							.style("fill", function(d) { return getStringEJSONColor(d.color); });
 					 });
 			};
 
@@ -84,3 +82,17 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 		});
 	}
 };
+
+precheckChangePixelColor = function (picID, pixID, color) {
+	if(Meteor.user()) {
+		Meteor.call('changePixelColor', picID, pixID, color, 
+			function (error, result) { 
+				if(error) {
+					console.log("precheckChangePixelColor (callback): update failed. error=" + error);
+				}
+				if(result) {
+					console.log("precheckChangePixelColor (callback): update success. result=" + result);
+				}
+			});
+	}
+}
