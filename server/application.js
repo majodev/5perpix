@@ -1,32 +1,13 @@
-
-
 /**
- * CLIENTS ONLY
- */
-if (Meteor.isClient) {
-
-	/**
-	* subscribe behaviour on the client (needed when package autopublish was removed from meteor!)
-	*
-	* sum-up:
-	* @pictures: subscribe to the published pictures from the server.
-	* @pixels: subscribe ONLY to the pixels of a selected picture.
-	*/
- 
-	Meteor.subscribe("mrtpicturecollection");
-	Meteor.subscribe("mrtpixelcollection", {p: Session.get("selected_picture")});
-	Meteor.subscribe("mrtmessagereferencecollection");
-	Meteor.subscribe("mrtmessagecollection");
-
-	// Called on client-startup: If no picture selected, select one.
-	Meteor.startup(function () {
+	 * Called on server-startup to fill some example pictures and pixels to our Collections if nothing exists
+	 */
+	Meteor.startup(function() {
+		// STARTUP test content server hack: always reset.
+		//if(MrtPictureCollection.find().count() < 1) {
+			console.log("Meteor.startup (server): removing old documents from collections...");
+			resetAllMrtCollections();
+		//}
 	});
-	
-}
-
-
-
-
 
 /**
  * Helper function to return a randomly generated color channel as int
@@ -48,31 +29,6 @@ function getRandomEJSONColor() {
 	return color;
 }
 
-
-
-
-
-
-
-
-/**
- * SERVER ONLY
- */
-if (Meteor.isServer) {
-
-	
-
-
-	/**
-	 * Called on server-startup to fill some example pictures and pixels to our Collections if nothing exists
-	 */
-	Meteor.startup(function() {
-		// STARTUP test content server hack: always reset.
-		//if(MrtPictureCollection.find().count() < 1) {
-			console.log("Meteor.startup: removing old documents from collections...");
-			resetAllMrtCollections();
-		//}
-	});
 
 	resetAllMrtCollections = function() {
 		//MrtPixelHistoryCollection.remove({}, function() {
@@ -199,4 +155,3 @@ if (Meteor.isServer) {
 		}
 		console.log("addPixels: added pixels for pID=" + picID + " rows=" + rows + " cols=" + cols);
 	};
-}
