@@ -5,8 +5,8 @@
 MrtMessageCollection = new Meteor.Collection('mrtmessagecollection');
 
 
-MrtMessageCollection.allow({
-	insert: function(userId, doc) {
-		return true;
-	}
-});
+// MrtMessageCollection.allow({
+// 	insert: function(userId, doc) {
+// 		return true;
+// 	}
+// });

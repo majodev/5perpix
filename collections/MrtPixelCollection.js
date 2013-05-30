@@ -8,36 +8,36 @@ MrtPixelCollection = new Meteor.Collection('mrtpixelcollection');
 /** CRUD-restrictions (create, read, update, delete):
 	@pixels: we define changed functions for pixels, as we want all users to manipulate them...
 	*/
-MrtPixelCollection.allow({
-	update: function (userId, doc, fields, modifier) {
-		// update is allowed with proper parameter
-		return _.contains(fields, 'color') && 
-			EJSON.isBinary(doc.color) &&
-			doc.color.length === 3;
-	},
+// MrtPixelCollection.allow({
+// 	update: function (userId, doc, fields, modifier) {
+// 		// update is allowed with proper parameter
+// 		return _.contains(fields, 'color') && 
+// 			EJSON.isBinary(doc.color) &&
+// 			doc.color.length === 3;
+// 	},
 
-fetch: ['color']
-});
+// fetch: ['color']
+// });
 
-MrtPixelCollection.deny({
-	update: function (userId, doc, fields, modifier) {
-		// changes to x, y and pID denied!
-		return _.contains(fields, 'x') || 
-			_.contains(fields, 'y') || 
-			_.contains(fields, 'picID');
-	},
+// MrtPixelCollection.deny({
+// 	update: function (userId, doc, fields, modifier) {
+// 		// changes to x, y and pID denied!
+// 		return _.contains(fields, 'x') || 
+// 			_.contains(fields, 'y') || 
+// 			_.contains(fields, 'picID');
+// 	},
 
-fetch: ['x', 'y', 'picID']
-});
+// fetch: ['x', 'y', 'picID']
+// });
 
-MrtPixelCollection.deny({
-	update: function (userId, doc, fields, modifier) {
-		// changes to x, y and pID denied!
-		if(Meteor.userId() === null)
-			return true;
-		else
-			return false;
-	},
+// MrtPixelCollection.deny({
+// 	update: function (userId, doc, fields, modifier) {
+// 		// changes to x, y and pID denied!
+// 		if(Meteor.userId() === null)
+// 			return true;
+// 		else
+// 			return false;
+// 	},
 
-	fetch: []
-});
+// 	fetch: []
+// });
