@@ -1,0 +1,1 @@
+MrtMessageReferenceCollection = new Meteor.Collection('mrtmessagereferencecollection');

@@ -1,105 +1,105 @@
 old allows
 
-    //addTestPictureWithPixels("BigPicture-MediumPixels", 500, 500, 12, 12);
+		//addTestPictureWithPixels("BigPicture-MediumPixels", 500, 500, 12, 12);
 
-    //addTestPictureWithPixels("SmallPicture-ManyPixels", 200, 200, 20, 20);
-    //addTestPictureWithPixels("MediumPicture-ManyPixels", 350, 350, 20, 20);
+		//addTestPictureWithPixels("SmallPicture-ManyPixels", 200, 200, 20, 20);
+		//addTestPictureWithPixels("MediumPicture-ManyPixels", 350, 350, 20, 20);
 
-    //addTestPictureWithPixels("SmallPicture-MediumPixels", 200, 200, 12, 12);
+		//addTestPictureWithPixels("SmallPicture-MediumPixels", 200, 200, 12, 12);
 
-    
+		
 // insert: function (userId, doc) {
 
-    // // check for mandatory Insert Fields of Pixel
-    // if(_contains(fields, 'i') &&
-    //     _contains(fields, 'y') &&
-    //     _contains(fields, 'x') &&
-    //     _contains(fields, 'color') &&
-    //     _contains(fields, 'picID') &&
-    //     _contains(fields, 'locked') &&) {
+		// // check for mandatory Insert Fields of Pixel
+		// if(_contains(fields, 'i') &&
+		//     _contains(fields, 'y') &&
+		//     _contains(fields, 'x') &&
+		//     _contains(fields, 'color') &&
+		//     _contains(fields, 'picID') &&
+		//     _contains(fields, 'locked') &&) {
 
 
-    //   // new pixel might have no ancestor check
-    //   if(doc.prvPixID === "")
-    //     //is there an ancestor to the new pixel?
-    //     if( MrtPixelCollection.findOne({
-    //       picID: doc.picID, 
-    //       locked: false, 
-    //       x: doc.x, 
-    //       y: doc.y}).count() === 0) { 
+		//   // new pixel might have no ancestor check
+		//   if(doc.prvPixID === "")
+		//     //is there an ancestor to the new pixel?
+		//     if( MrtPixelCollection.findOne({
+		//       picID: doc.picID, 
+		//       locked: false, 
+		//       x: doc.x, 
+		//       y: doc.y}).count() === 0) { 
 
-    //     // There isn't an ancestor to the new pixel.
-    //     // Let's check if the pixel is within our picture col and row height...
+		//     // There isn't an ancestor to the new pixel.
+		//     // Let's check if the pixel is within our picture col and row height...
 
-    //   } else {
+		//   } else {
 
-    //   }
+		//   }
 
-    //   // Reference to previous pic checker
-    //   if(_contains(fields, 'prvPixID')) {
+		//   // Reference to previous pic checker
+		//   if(_contains(fields, 'prvPixID')) {
 
-    //     if(doc.i === (MrtPixelCollection(find()).i+ 1)) {
+		//     if(doc.i === (MrtPixelCollection(find()).i+ 1)) {
 
-    //     }
-    //   } 
-    // }
-      
+		//     }
+		//   } 
+		// }
+			
 
-    //   return 
-    //     doc.locked === false &&
-    //     doc.i === (MrtPixelCollection(find({doc.prvPixID})).i + 1);
-    //   ;
-    // }
-          
-    //       i: count,
-    //       x: index_x, 
-    //       y: index_y, 
-    //       color: getRandomEJSONColor(),
-    //       picID: picID,
-    //       nxtPixID: "",
-    //       prvPixID: "",
-    //       locked: false
-
-
-
-  // if(_.contains(fields, 'color') && 
-      //   _.contains(fields, 'nxtPicID') &&
-      //   _.contains(fields, 'locked')) {
-
-      //   MrtPixelCollection.insert({
-      //     i: MrtPixelCollection.find(picID: doc.pidID).count() + 1,
-      //     x: doc.x, 
-      //     y: doc.y, 
-      //     color: doc.color,
-      //     picID: doc.picID,
-      //     nxtPixID: "",
-      //     prvPixID: doc._id,
-      //     locked: false
-      //   });
-      // }
-
-      // no update allowed directly, but new data was inserted into a new one
-      //return false;
-
-      // if (_.contains(fields, 'color') === true) {
-      //   MrtPixelCollection.insert({
-      //     x: index_x, 
-      //     y: index_y, 
-      //     color: getRandomEJSONColor(),
-      //     picID: picID,
-      //     index: 0,
-      //     locked: false
-      //   });
-      // } 
+		//   return 
+		//     doc.locked === false &&
+		//     doc.i === (MrtPixelCollection(find({doc.prvPixID})).i + 1);
+		//   ;
+		// }
+					
+		//       i: count,
+		//       x: index_x, 
+		//       y: index_y, 
+		//       color: getRandomEJSONColor(),
+		//       picID: picID,
+		//       nxtPixID: "",
+		//       prvPixID: "",
+		//       locked: false
 
 
 
-   /**
+	// if(_.contains(fields, 'color') && 
+			//   _.contains(fields, 'nxtPicID') &&
+			//   _.contains(fields, 'locked')) {
+
+			//   MrtPixelCollection.insert({
+			//     i: MrtPixelCollection.find(picID: doc.pidID).count() + 1,
+			//     x: doc.x, 
+			//     y: doc.y, 
+			//     color: doc.color,
+			//     picID: doc.picID,
+			//     nxtPixID: "",
+			//     prvPixID: doc._id,
+			//     locked: false
+			//   });
+			// }
+
+			// no update allowed directly, but new data was inserted into a new one
+			//return false;
+
+			// if (_.contains(fields, 'color') === true) {
+			//   MrtPixelCollection.insert({
+			//     x: index_x, 
+			//     y: index_y, 
+			//     color: getRandomEJSONColor(),
+			//     picID: picID,
+			//     index: 0,
+			//     locked: false
+			//   });
+			// } 
+
+
+
+	 /**
  * CLIENTS ONLY
  */
 if (Meteor.isClient) {
 
-  
+	
 }
 
 
@@ -108,55 +108,55 @@ if (Meteor.isClient) {
  */
 if (Meteor.isServer) {
 
-  
+	
 
-  // referenceMessageWithTarget = function(target_id, target_type) {
-  //   if(target_type === "pic") {
-  //     if(MrtMessageReferenceCollection.findOne(target_id: target_id, target_type: target_type).count === 0) {
-  //       console.log("addMessageReferenceForPicture: catched an insert reference to picture that already existed! picID=" + picID);
-  //       return addMessageReference(target_id, target_type);
-  //     } else {
-  //       console.log("addMessageReferenceForPicture: reference to targetID=" + target_id + " alredy exists!, target_type=" + target_type);
-  //       return getMessageReference(target_id, target_type);
-  //     }
-  //   }
+	// referenceMessageWithTarget = function(target_id, target_type) {
+	//   if(target_type === "pic") {
+	//     if(MrtMessageReferenceCollection.findOne(target_id: target_id, target_type: target_type).count === 0) {
+	//       console.log("addMessageReferenceForPicture: catched an insert reference to picture that already existed! picID=" + picID);
+	//       return addMessageReference(target_id, target_type);
+	//     } else {
+	//       console.log("addMessageReferenceForPicture: reference to targetID=" + target_id + " alredy exists!, target_type=" + target_type);
+	//       return getMessageReference(target_id, target_type);
+	//     }
+	//   }
 
-  // }
+	// }
 
-  // function addMessageReference(target_id, target_type) {
-  //   referenceID = MrtMessageReferenceCollection.insert({
-  //     target_id: picID, 
-  //     target_type: "pic"
-  //   });
-  // }
+	// function addMessageReference(target_id, target_type) {
+	//   referenceID = MrtMessageReferenceCollection.insert({
+	//     target_id: picID, 
+	//     target_type: "pic"
+	//   });
+	// }
 
-  // addPixelHistoryToPixel = function(pixID) {
+	// addPixelHistoryToPixel = function(pixID) {
 
-  //   // TODO MAKE UPDATING AND INSERTING PIXELS A SERVER SIDE FUNCTION AND DENY
-  //   // EVERYTHING FROM OUTSIDE!!! - also hide not needed things from outside
-  //   // e.g picID within pixels - make a specialized sort that returns the needed part!!!!
-  //   // 
-  // };
+	//   // TODO MAKE UPDATING AND INSERTING PIXELS A SERVER SIDE FUNCTION AND DENY
+	//   // EVERYTHING FROM OUTSIDE!!! - also hide not needed things from outside
+	//   // e.g picID within pixels - make a specialized sort that returns the needed part!!!!
+	//   // 
+	// };
 
-  // insertPixelHistory = function(pixID, color) {
-  //   var currentHistoryIndex = MrtPixelHistoryCollection.find({pixID: pixID}).count();
-  //   MrtPixelHistoryCollection.insert({
-  //     pixID: pixID,
-  //     color: color
-  //   });
-  // }
-  // 
+	// insertPixelHistory = function(pixID, color) {
+	//   var currentHistoryIndex = MrtPixelHistoryCollection.find({pixID: pixID}).count();
+	//   MrtPixelHistoryCollection.insert({
+	//     pixID: pixID,
+	//     color: color
+	//   });
+	// }
+	// 
 
-  /**
-   * addTestPictureWithPixels defines a function to add a picture with the overgiven parameters to the collection. 
-   * It also executes addPixels with the reference to the new generated picture
-   * @param  {string} name        name of the picture
-   * @param  {number} gridWidth   width of the picture
-   * @param  {number} gridHeight  height of the picture
-   * @param  {int} rows           number of pixel rows
-   * @param  {int} cols           number of pixel colums
-   */
-  
+	/**
+	 * addTestPictureWithPixels defines a function to add a picture with the overgiven parameters to the collection. 
+	 * It also executes addPixels with the reference to the new generated picture
+	 * @param  {string} name        name of the picture
+	 * @param  {number} gridWidth   width of the picture
+	 * @param  {number} gridHeight  height of the picture
+	 * @param  {int} rows           number of pixel rows
+	 * @param  {int} cols           number of pixel colums
+	 */
+	
 
-   
+	 
 }

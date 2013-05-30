@@ -1,9 +1,9 @@
 .pictureVisualizationItemSVG {
-  position: relative;
-  width: 520px;
-  height: 520px;
+	position: relative;
+	width: 520px;
+	height: 520px;
 }
 
 .picture.selected {
-    background-color: yellow;
+	background-color: yellow;
 }
