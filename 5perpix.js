@@ -21,19 +21,6 @@ if (Meteor.isClient) {
 	// Called on client-startup: If no picture selected, select one.
 	Meteor.startup(function () {
 	});
-
-
-	
-
-	
-
-
-
-
-
-	
-
-
 	
 }
 
