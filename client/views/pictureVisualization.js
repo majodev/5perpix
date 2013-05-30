@@ -83,6 +83,9 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 	}
 };
 
+/**
+ * precheck method
+ */
 precheckChangePixelColor = function (picID, pixID, color) {
 	if(Meteor.user()) {
 		Meteor.call('changePixelColor', picID, pixID, color, 

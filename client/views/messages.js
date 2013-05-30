@@ -1,14 +1,14 @@
 Template.messageItemAdd.events({
 	'click button.messageItemAddButton': function (event, template) {
 		precheckMethodAddMessage(template.find(".messageItemAddInput").value,
-				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id);
-			template.find(".messageItemAddInput").value = "";
+				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id, 
+				template);
 	},
 	'keypress input.messageItemAddInput': function (event, template) {
 		if(event.keyCode == 13){
 			precheckMethodAddMessage(template.find(".messageItemAddInput").value,
-				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id);
-			template.find(".messageItemAddInput").value = "";
+				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id, 
+				template);
 		}
 	}
 });	
@@ -34,31 +34,24 @@ Template.messageDisplay.messagesFound = function () {
 			targetID: Session.get("selected_picture")})._id});
 };
 
-precheckMethodAddMessage = function (message, targetID) {
-	if(message )
-	Meteor.call('addMessage', 
-		message, 
-		targetID, 
-		function (error, result) {
-			if(error) {
-				console.log("precheckMethodAddMessage (callback): update failed. error=" + error);
+/**
+ * precheck method
+ */
+precheckMethodAddMessage = function (message, targetID, template) {
+	if(Meteor.user() && targetID.length !== 0 && message.length !== 0) {
+		Meteor.call('addMessage', 
+			message, 
+			targetID, 
+			function (error, result) {
+				if(error) {
+					console.log("precheckMethodAddMessage (callback): update failed. error=" + error);
+				}
+				if(result) {
+					console.log("precheckMethodAddMessage (callback): update success. result=" + result);
+				}
 			}
-			if(result) {
-				console.log("precheckMethodAddMessage (callback): update success. result=" + result);
-			}
-		}
-	);
+		);
+		// clear the input field...
+		template.find(".messageItemAddInput").value = "";
+	}
 }
-
-// addMessage = function (event, template) {
-// 	MrtMessageCollection.insert({
-// 		text: template.find(".messageItemAddInput").value, 
-// 		messageReferenceID: MrtMessageReferenceCollection.findOne({
-// 			targetID: Session.get("selected_picture")
-// 		})._id,
-// 		author: Meteor.user().emails[0].address,
-// 		timestamp: new Date().toUTCString(),
-// 	}, function() {
-// 		template.find(".messageItemAddInput").value = "";
-// 	});
-// };
