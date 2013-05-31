@@ -7,8 +7,6 @@ Template.pictureVisualizationHolder.selected_picture = function () {
 	return pic && pic.name;
 };
 
-
-
 /**
  * Template pictureVisualizationItemSVG destroyed function: Kills Deps.autorun handle when the Template is no longer needed.
  */
@@ -16,9 +14,53 @@ Template.pictureVisualizationItemSVG.destroyed = function () {
 	this.handle && this.handle.stop();
 };
 
+// Template.pictureRandomColorSelector.randomColor = function () {
+// 	return randomColor;
+// }
 
+// Template.pictureSelectedDrawColor.fillRandomColor = function () {
+// 	return getStringEJSONColor(randomColor);
+// }
 
-	/**
+Template.pictureSelectedDrawColor.rendered = function () {
+	console.log("Template.pictureVisualizationItemSVG.rendered");
+	var self = this;
+	self.node = self.find("circle");
+
+	if(! self.handle) {
+		
+		// define a Dep.autorun for the Template, which automatically runs when changes happen
+		self.handle = Deps.autorun(function () {
+			console.log("Template.pictureSelectedDrawColor.rendered: Deps.autorun");
+
+			var updateDrawColor = function (circle) {
+				console.log("Template.pictureSelectedDrawColor.rendered: Deps.autorun: updateDrawColor")
+				circle.style("fill", Session.get('selected_colorFill'));
+			};
+
+			var circle = d3.select(self.node);
+			
+			// data update only triggers fill to refresh
+			updateDrawColor(circle);
+			
+			d3.select(self.node)
+			.style("fill", Session.get('selected_colorFill'));
+		});
+	}
+};
+
+Template.pictureRandomColorSelector.events({
+	'click button.pictureRandomColorSelectorButton': function (event, template) {
+		var randomColor = getRandomEJSONColor();
+		Session.set('selected_colorFill', getStringEJSONColor(randomColor));
+		Session.set('selected_colorEJSONSerial', EJSON.stringify(randomColor));
+		console.log("emplate.pictureRandomColorSelector.events buttonClicked: randomColor=" + randomColor);
+	}
+});
+
+var pressed = false;
+
+/**
  * Template pictureVisualizationItemSVG rendered function. Called when pictureVisualizationItemSVG was successfully rendered the first time
  * Defines algorithms to be executed by Deps.autorun on Template Change / Datachange.
  */
@@ -39,7 +81,7 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 			 */
 			var updateRaw = function (rect) {
 
-				console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun: updateRaw")
+				console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun: updateRaw");
 
 				rect.attr("x", function(d) { return (d.x) * MrtPictureCollection.findOne(d.picID).itemwidth; })
 					.attr("y", function(d) { return (d.y) * MrtPictureCollection.findOne(d.picID).itemheight; })
@@ -49,11 +91,24 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 					// .attr("ry", 6)
 					.style("fill", function(d) { return getStringEJSONColor(d.color); })
 					// .style("stroke", '#555')
+					.on('mousedown', function(e) { // on mousedown
+						console.log(e);
+						precheckChangePixelColor(e.picID, e._id, EJSON.parse(Session.get('selected_colorEJSONSerial')));
+						pressed = true;
+					 })
+					.on('mouseup', function(e) { // on mousedown
+						pressed = false;
+					 })
 					.on('click', function(e) { // on click
-						precheckChangePixelColor(e.picID, e._id, getRandomEJSONColor());
+						precheckChangePixelColor(e.picID, e._id, EJSON.parse(Session.get('selected_colorEJSONSerial')));
 					 })
 					.on('mouseover', function(e) { // on mouseover
-						precheckChangePixelColor(e.picID, e._id, getRandomEJSONColor());
+						if(pressed) {
+							precheckChangePixelColor(e.picID, e._id, EJSON.parse(Session.get('selected_colorEJSONSerial')));
+						} else {
+							d3.select(this)
+								.style("fill", function(d) { return getStringEJSONColor(EJSON.parse(Session.get('selected_colorEJSONSerial'))); });
+					 	}
 					 })
 					.on('mouseout', function() { // on mouseout
 						d3.select(this)
@@ -88,6 +143,7 @@ Template.pictureVisualizationItemSVG.rendered = function () {
  */
 precheckChangePixelColor = function (picID, pixID, color) {
 	if(Meteor.user()) {
+		if(EJSON.equals(MrtPixelCollection.findOne(pixID).color, color) === false) {
 		Meteor.call('changePixelColor', picID, pixID, color, 
 			function (error, result) { 
 				if(error) {
@@ -97,5 +153,6 @@ precheckChangePixelColor = function (picID, pixID, color) {
 					console.log("precheckChangePixelColor (callback): update success. result=" + result);
 				}
 			});
+		}
 	}
 }

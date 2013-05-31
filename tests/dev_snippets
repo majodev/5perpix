@@ -25,6 +25,46 @@ Meteor.methods({
 	}
 });
 
+
+
+Template.pictureVisualizationItemSVG.rendered = function () {
+	console.log("Template.pictureVisualizationItemSVG.rendered");
+	var self = this;
+	self.node = self.find("svg");
+
+	if(! self.handle) {
+		
+		// define a Dep.autorun for the Template, which automatically runs when changes happen
+		self.handle = Deps.autorun(function (){
+			console.log("Template.pictureVisualizationItemSVG.rendered: Deps.autorun");
+
+			/**
+			 * Init / Update on change
+			 * @param  {svg:rect} Needs d3.js rects as parameter.
+			 */
+			var updateRaw = function (rect) {
+			};
+
+			// bind my pixel data to the g class .pixels 
+			var minpix = d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
+				.data(MrtPixelCollection.find({
+					picID: Session.get("selected_picture")}).fetch(), 
+					function (minpix) {return minpix._id; });
+
+
+			// data update only triggers fill to refresh
+			updateRaw(minpix.enter().append("svg:rect"));
+			
+			d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
+				.data(MrtPixelCollection.find({picID: Session.get("selected_picture")}).fetch(), 
+					function (minpix) {return minpix._id; })
+				.style("fill", function(d) { return getStringEJSONColor(d.color); })
+		});
+	}
+};
+
+
+
 // server: publish the current size of a collection
 Meteor.publish("counts-by-room", function (roomId) {
   var self = this;

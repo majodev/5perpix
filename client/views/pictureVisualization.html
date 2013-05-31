@@ -1,6 +1,7 @@
 <template name="pictureVisualizationHolder">
 	{{#if selected_picture}}
 		{{> pictureInformationDisplay}}
+		{{> pictureRandomColorSelector}}
 		{{> pictureVisualization}}
 	{{/if}}
 	{{#unless selected_picture}}
@@ -30,6 +31,25 @@
 		{{#constant}}
 			<svg id="pictureVisualizationItemSVGContainer" width="520" height="520" >
 				<g class="pictureVisualizationItemSVGPixels"></g>
+			</svg>
+		{{/constant}}
+	</div>
+</template>
+
+<template name="pictureRandomColorSelector">
+	<div class="pictureRandomColorSelector">
+		<button class="pictureRandomColorSelectorButton">random color</button>
+		<div class="pictureRandomColorSelectorColor">
+			{{> pictureSelectedDrawColor}}
+		</div>
+	</div>
+</template>
+
+<template name="pictureSelectedDrawColor">
+	<div class="pictureSelectedDrawColor">
+		{{#constant}}
+			<svg id="selectedColor" width="40" height="40">
+				<circle cx="20" cy="20" r="20" />
 			</svg>
 		{{/constant}}
 	</div>

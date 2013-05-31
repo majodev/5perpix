@@ -23,16 +23,29 @@ this.resetAllMrtCollections = resetAllMrtCollections; // Meteor 0.6.0 var scope 
 
 addTestData = function() {
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("SmallPicture-FewPixels", 200, 200, 5, 5), "a");
+		addTestPictureWithPixels("less", 500, 500, 8, 8), "a");
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("MediumPicture-FewPixels", 350, 350, 5, 5), "b");
+		addTestPictureWithPixels("few", 500, 500, 16, 16), "b");
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("BigPicture-FewPixels", 500, 500, 5, 5), "c");
+		addTestPictureWithPixels("normal", 500, 500, 34, 34), "c");
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("MediumPicture-MediumPixels", 350, 350, 12, 12), null);
+		addTestPictureWithPixels("bigger", 500, 500, 42, 42), null);
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("BigPicture-ManyPixels", 500, 500, 20, 20), null);
+		addTestPictureWithPixels("large", 500, 500, 50, 50), null);
 }
+
+// addTestData = function() {
+// 	addTestReferencesAndMessages(
+// 		addTestPictureWithPixels("SmallPicture-FewPixels", 200, 200, 5, 5), "a");
+// 	addTestReferencesAndMessages(
+// 		addTestPictureWithPixels("MediumPicture-FewPixels", 350, 350, 5, 5), "b");
+// 	addTestReferencesAndMessages(
+// 		addTestPictureWithPixels("BigPicture-FewPixels", 500, 500, 5, 5), "c");
+// 	addTestReferencesAndMessages(
+// 		addTestPictureWithPixels("MediumPicture-MediumPixels", 350, 350, 12, 12), null);
+// 	addTestReferencesAndMessages(
+// 		addTestPictureWithPixels("BigPicture-ManyPixels", 500, 500, 20, 20), null);
+// }
 
 addTestReferencesAndMessages = function(picID, answertype) {
 	var msgRefID = addMessageReference(picID, "pic");
