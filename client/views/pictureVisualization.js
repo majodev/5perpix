@@ -14,14 +14,9 @@ Template.pictureVisualizationItemSVG.destroyed = function () {
 	this.handle && this.handle.stop();
 };
 
-// Template.pictureRandomColorSelector.randomColor = function () {
-// 	return randomColor;
-// }
-
-// Template.pictureSelectedDrawColor.fillRandomColor = function () {
-// 	return getStringEJSONColor(randomColor);
-// }
-
+/**
+ * Template pictureSelectedDrawColor rendered function: Renders the color that's currently in our session.
+ */
 Template.pictureSelectedDrawColor.rendered = function () {
 	console.log("Template.pictureVisualizationItemSVG.rendered");
 	var self = this;
@@ -49,6 +44,9 @@ Template.pictureSelectedDrawColor.rendered = function () {
 	}
 };
 
+/**
+ * Template pictureRandomColorSelector events: resets the random color in our session...
+ */
 Template.pictureRandomColorSelector.events({
 	'click button.pictureRandomColorSelectorButton': function (event, template) {
 		var randomColor = getRandomEJSONColor();
@@ -58,6 +56,9 @@ Template.pictureRandomColorSelector.events({
 	}
 });
 
+/**
+ * Helper for the d3 svg grid (Template pictureVisualizationItemSVG rendered) to determine if mousepressed on mousemouse
+ */
 var pressed = false;
 
 /**

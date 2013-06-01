@@ -1,5 +1,15 @@
- /**
+/**
+ * testdata.js defines a few functions to add test content to our application
+ * these should NEVER be visible to any client!
+ *
+ * WARNING: don't EVER export these functions to clients, THEY ARE BLOCKING!
+ * might be useful to examine the collection field structure
+ */
+
+/**
 	* EXPORTED resetAllMrtCollections: Remove all data from collections and add the defined test data
+	*
+	* THIS function is run by Meteor.startup on the server!
 	*/
 resetAllMrtCollections = function() {
 		MrtPixelCollection.remove({}, function() {
@@ -14,13 +24,11 @@ resetAllMrtCollections = function() {
 
 this.resetAllMrtCollections = resetAllMrtCollections; // Meteor 0.6.0 var scope export.
 
- /**
-	* Generate testdata for the server.
-	* Also useful to examine the target structure
-	*
-	* WARNING: all inserts are BLOCKING (not async!) on the server!
-	*/
 
+/**
+ * addTestData: Generate testdata for the server.
+ * WARNING: all inserts are BLOCKING (not async!) on the server!
+ */
 addTestData = function() {
 	addTestReferencesAndMessages(
 		addTestPictureWithPixels("less", 500, 500, 8, 8), "a");
@@ -34,19 +42,11 @@ addTestData = function() {
 		addTestPictureWithPixels("large", 500, 500, 50, 50), null);
 }
 
-// addTestData = function() {
-// 	addTestReferencesAndMessages(
-// 		addTestPictureWithPixels("SmallPicture-FewPixels", 200, 200, 5, 5), "a");
-// 	addTestReferencesAndMessages(
-// 		addTestPictureWithPixels("MediumPicture-FewPixels", 350, 350, 5, 5), "b");
-// 	addTestReferencesAndMessages(
-// 		addTestPictureWithPixels("BigPicture-FewPixels", 500, 500, 5, 5), "c");
-// 	addTestReferencesAndMessages(
-// 		addTestPictureWithPixels("MediumPicture-MediumPixels", 350, 350, 12, 12), null);
-// 	addTestReferencesAndMessages(
-// 		addTestPictureWithPixels("BigPicture-ManyPixels", 500, 500, 20, 20), null);
-// }
-
+/**
+ * addTestReferencesAndMessages: attach a few example message (based on answertype) to a picID (the target messageReference)
+ * @param  {string} picID      target picture to attach a message
+ * @param  {string} answertype a, b or c as string for some message presets
+ */
 addTestReferencesAndMessages = function(picID, answertype) {
 	var msgRefID = addMessageReference(picID, "pic");
 
@@ -64,6 +64,15 @@ addTestReferencesAndMessages = function(picID, answertype) {
 	}
 }
 
+/**
+ * addTestPictureWithPixels: directly inserts a new picture + its pixels with the overgiven arguments
+ * @param  {string} name      name of the new picture
+ * @param  {int} gridWidth  	width of the new picture
+ * @param  {int} gridHeight 	height of the new picture
+ * @param  {int} rows       	row (count pixels) of the new picture
+ * @param  {int} cols       	cols (count pixels) of the new picture
+ * @return {string}           _id of the new inserted picture
+ */
 addTestPictureWithPixels = function(name, gridWidth, gridHeight, rows, cols) {
 	var gridItemWidth = gridWidth / rows;
 	var gridItemHeight = (true) ? gridItemWidth : gridHeight / cols;
@@ -85,6 +94,12 @@ addTestPictureWithPixels = function(name, gridWidth, gridHeight, rows, cols) {
 	return picID;
 };
 
+/**
+ * addMessageReference: directly inserts a new messageReference with the overgiven arguments
+ * @param  {string} targetID   _id of the target (e.g. picture_id)
+ * @param  {string} targetType type of the target (e.g. "pic")
+ * @return {string}            _id of the new inserted messageReference
+ */
 addMessageReference = function(targetID, targetType) {
 	var messageReference = MrtMessageReferenceCollection.insert({
 		targetID: targetID, 
@@ -93,6 +108,14 @@ addMessageReference = function(targetID, targetType) {
 	return messageReference;
 };
 
+/**
+ * addMessage: directly inserts a new message with the overgiven arguments
+ * @param  {string} text               text of the message
+ * @param  {string} messageReferenceID _id of the messageReference
+ * @param  {string} author             author of the message
+ * @param  {string} timestamp          timestamp of the message (UTCString)
+ * @return {string}                    _id of the inserted message
+ */
 addMessage = function(text, messageReferenceID, author, timestamp) {
 	var messageID = MrtMessageCollection.insert({
 		text: text, 
@@ -105,9 +128,9 @@ addMessage = function(text, messageReferenceID, author, timestamp) {
 
 /**
  * addPixels defines a function to fill an example grid with data --> MrtPixelCollection
- * @param  {int} rows               count of rows to generate --> x
- * @param  {int} cols               count of cols to generate --> y
- * @param  {string | objectID} pID  reference to picture --> picID
+ * @param  {int} 		rows 	count of rows to generate --> x
+ * @param  {int} 		cols 	count of cols to generate --> y
+ * @param  {string} pID  	reference to picture --> picID
  */
 addPixels = function(rows, cols, picID) {
 
@@ -119,7 +142,6 @@ addPixels = function(rows, cols, picID) {
 				y: index_y, 
 				color: getRandomEJSONColor(),
 				picID: picID,
-				userID: "SERVER"
 			});
 		}
 	}

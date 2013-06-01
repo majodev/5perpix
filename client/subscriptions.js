@@ -1,16 +1,8 @@
 /**
  * subscribe behaviour on the client (needed when package autopublish was removed from meteor!)
+ * we wrap most subscribes in an autorun because they have arguments (Session.get) that could change our subscription and thus have to be run multiple times on the client.
  */
 Meteor.subscribe("mrtpicturecollection");
-
-Meteor.autorun(function () {
-	Meteor.subscribe("mrtpixelcollection", 
-		Session.get("selected_picture"), 
-		function() {
-			console.log("mrtpixelcollection: subscription autorun.");
-		}
-	);
-});
 
 Meteor.autorun(function () {
 	Meteor.subscribe("mrtmessagereferencecollection", 
@@ -31,6 +23,12 @@ Meteor.autorun(function () {
 	);
 });
 
+Meteor.autorun(function () {
+	Meteor.subscribe("mrtpixelcollection", 
+		Session.get("selected_picture"), 
+		function() {
+			console.log("mrtpixelcollection: subscription autorun.");
+		}
+	);
+});
 
-
-//Meteor.subscribe("pubpictureandpixels", Session.get("selected_picture"));

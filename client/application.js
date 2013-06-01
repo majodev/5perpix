@@ -4,10 +4,10 @@
 Meteor.startup(function () {
 	console.log("Meteor.startup (client)");
 
-	// set a random color in the session...
+	// preset a random color in the session (see view pictureVisualization)
 	var randomColor = getRandomEJSONColor();
 	Session.set('selected_colorFill', getStringEJSONColor(randomColor));
 	Session.set('selected_colorEJSONSerial', EJSON.stringify(randomColor));
-	console.log("emplate.pictureRandomColorSelector.events buttonClicked: randomColor=" + randomColor);
+	console.log("Meteor.startup: randomColor=" + randomColor);
 
 });

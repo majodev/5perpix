@@ -1,3 +1,6 @@
+/**
+ * Add a message though keypress ENTER or button event
+ */
 Template.messageItemAdd.events({
 	'click button.messageItemAddButton': function (event, template) {
 		precheckMethodAddMessage(template.find(".messageItemAddInput").value,
@@ -5,7 +8,7 @@ Template.messageItemAdd.events({
 				template);
 	},
 	'keypress input.messageItemAddInput': function (event, template) {
-		if(event.keyCode == 13){
+		if(event.keyCode === 13){
 			precheckMethodAddMessage(template.find(".messageItemAddInput").value,
 				MrtMessageReferenceCollection.findOne({targetID: Session.get("selected_picture")})._id, 
 				template);
