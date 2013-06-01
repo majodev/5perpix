@@ -1,5 +1,5 @@
 <h1>5perpix</h1>
-5perpix is a prototype I made to demonstrate reactivity while drawing on SVGs. It's powered by the giant <a href="http://www.meteor.com">meteor.js</a> and some <a href="http://d3js.org/">d3.js</a> magic.
+5perpix is a prototype I made to demonstrate, that it's possible to build a data-driven collaborative drawing webapp purely in js. It's powered by the giant <a href="http://www.meteor.com">meteor.js</a> and some <a href="http://d3js.org/">d3.js</a> magic.
 
 The application is currently live at <a href="http://5perpix.majodev.meteor.com">5perpix.majodev.meteor.com</a>.
 
