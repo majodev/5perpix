@@ -20,3 +20,7 @@ Clone and use meteorite (mrt) to run this application and resolve its dependenci
 
 I'm using Methor.methods to declare any allowed client interactions. These methods are defined in lib/methods.js. All direct transactions from the client to the database (inserting, updating and removing) should be denied. To enforce this behaviour, make sure to remove the smart package insecure! 
 <pre>mrt remove insecure</pre>
+
+<h2>Copyright</h2>
+MIT license - see LICENSE.md for further information -
+(c) 2013 Mario Ranftl (<a href="http://www.majodev.com">majodev</a>).
