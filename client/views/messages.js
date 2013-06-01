@@ -16,6 +16,9 @@ Template.messageItemAdd.events({
 	}
 });	
 
+/**
+ * Returns all messages found, limits to 15 results and sorts by timestamp
+ */
 Template.messageDisplay.messages = function () {
 	return MrtMessageCollection.find({
 		messageReferenceID: MrtMessageReferenceCollection.findOne({
@@ -25,12 +28,18 @@ Template.messageDisplay.messages = function () {
 		);
 };
 
+/**
+ * Returns the messageReference (currently only the picture id) of a target.
+ */
 Template.messageHolder.messageReference = function () {
 	return MrtMessageReferenceCollection.findOne(
 		{targetID: Session.get("selected_picture")}
 	);
 };
 
+/**
+ * Returns one message if it currently exists with the set reference in messages
+ */
 Template.messageDisplay.messagesFound = function () {
 	return MrtMessageCollection.findOne({
 		messageReferenceID: MrtMessageReferenceCollection.findOne({

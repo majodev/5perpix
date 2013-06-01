@@ -6,6 +6,9 @@ Template.pictureOverviewDisplay.pictures = function () {
 	return MrtPictureCollection.find({});
 };
 
+/**
+ * Checks if pictures exist
+ */
 Template.pictureOverviewHolder.picturesFound = function () {
 	return MrtPictureCollection.findOne();
 };
