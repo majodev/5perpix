@@ -8,13 +8,6 @@ Template.pictureVisualizationHolder.selected_picture = function () {
 };
 
 /**
- * Template pictureVisualizationItemSVG destroyed function: Kills Deps.autorun handle when the Template is no longer needed.
- */
-Template.pictureVisualizationItemSVG.destroyed = function () {
-	this.handle && this.handle.stop();
-};
-
-/**
  * Template pictureSelectedDrawColor rendered function: Renders the color that's currently in our session.
  */
 Template.pictureSelectedDrawColor.rendered = function () {
@@ -30,7 +23,7 @@ Template.pictureSelectedDrawColor.rendered = function () {
 
 			var updateDrawColor = function (circle) {
 				console.log("Template.pictureSelectedDrawColor.rendered: Deps.autorun: updateDrawColor")
-				circle.style("fill", Session.get('selected_colorFill'));
+				circle.style("fill", getStringEJSONColor(EJSON.parse(Session.get('selected_colorEJSONSerial'))));
 			};
 
 			var circle = d3.select(self.node);
@@ -39,7 +32,7 @@ Template.pictureSelectedDrawColor.rendered = function () {
 			updateDrawColor(circle);
 			
 			d3.select(self.node)
-			.style("fill", Session.get('selected_colorFill'));
+			.style("fill", getStringEJSONColor(EJSON.parse(Session.get('selected_colorEJSONSerial'))));
 		});
 	}
 };
@@ -49,10 +42,8 @@ Template.pictureSelectedDrawColor.rendered = function () {
  */
 Template.pictureRandomColorSelector.events({
 	'click button.pictureRandomColorSelectorButton': function (event, template) {
-		var randomColor = getRandomEJSONColor();
-		Session.set('selected_colorFill', getStringEJSONColor(randomColor));
-		Session.set('selected_colorEJSONSerial', EJSON.stringify(randomColor));
-		console.log("emplate.pictureRandomColorSelector.events buttonClicked: randomColor=" + randomColor);
+		Session.set('selected_colorEJSONSerial', EJSON.stringify(getRandomEJSONColor()));
+		console.log("emplate.pictureRandomColorSelector.events buttonClicked: randomColor=" + getStringEJSONColor(EJSON.parse(Session.get('selected_colorEJSONSerial'))));
 	}
 });
 
@@ -140,11 +131,21 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 };
 
 /**
- * precheck method
+ * Template pictureVisualizationItemSVG destroyed function: Kills Deps.autorun handle when the Template is no longer needed.
+ */
+Template.pictureVisualizationItemSVG.destroyed = function () {
+	this.handle && this.handle.stop();
+};
+
+/**
+ * precheckChangePixelColor: client side precheck before invoking Methor.method to change the pixel color
+ * @param  {string} 		picID _id of the picture
+ * @param  {string} 		pixID _id of the pixel
+ * @param  {Uint8Array} color new color of the pixel
  */
 precheckChangePixelColor = function (picID, pixID, color) {
 	if(Meteor.user()) {
-		if(EJSON.equals(MrtPixelCollection.findOne(pixID).color, color) === false) {
+		if(EJSON.equals(MrtPixelCollection.findOne(pixID).color, color) === false) { // check if it's a new color that going to be submitted.
 		Meteor.call('changePixelColor', picID, pixID, color, 
 			function (error, result) { 
 				if(error) {

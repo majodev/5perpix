@@ -47,7 +47,10 @@ Template.messageDisplay.messagesFound = function () {
 };
 
 /**
- * precheck method
+ * precheckMethodAddMessage: prechecks the arguments client-side before invoking Methor.call with the new insert.
+ * @param  {string} 					message  message as plain text
+ * @param  {string} 					targetID _id to the target this message is attached to
+ * @param  {Meteor.Template} 	template the template, to reset inputfield to "" if precheck operation is permitted.
  */
 precheckMethodAddMessage = function (message, targetID, template) {
 	if(Meteor.user() && targetID.length !== 0 && message.length !== 0) {
