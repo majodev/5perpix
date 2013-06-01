@@ -108,6 +108,10 @@ Template.pictureVisualizationItemSVG.rendered = function () {
 					 });
 			};
 
+			// reset the width and height of the svg as defined in the picture entity.
+			d3.select(self.node).attr("width", MrtPictureCollection.findOne(Session.get('selected_picture')).width);
+			d3.select(self.node).attr("height", MrtPictureCollection.findOne(Session.get('selected_picture')).height);
+
 			// bind my pixel data to the g class .pixels 
 			var minpix = d3.select(self.node).select(".pictureVisualizationItemSVGPixels").selectAll("rect")
 				.data(MrtPixelCollection.find({

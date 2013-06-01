@@ -31,15 +31,15 @@ this.resetAllMrtCollections = resetAllMrtCollections; // Meteor 0.6.0 var scope 
  */
 addTestData = function() {
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("less", 500, 500, 8, 8), "a");
+		addTestPictureWithPixels("less", 80, 80, 8, 8), "a");
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("few", 500, 500, 16, 16), "b");
+		addTestPictureWithPixels("few", 150, 150, 14, 14), "b");
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("normal", 500, 500, 34, 34), "c");
+		addTestPictureWithPixels("normal", 400, 400, 22, 22), "c");
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("bigger", 500, 500, 42, 42), null);
+		addTestPictureWithPixels("bigger", 550, 550, 30, 30), null);
 	addTestReferencesAndMessages(
-		addTestPictureWithPixels("large", 500, 500, 50, 50), null);
+		addTestPictureWithPixels("large", 700, 700, 40, 40), null);
 }
 
 /**
@@ -75,7 +75,7 @@ addTestReferencesAndMessages = function(picID, answertype) {
  */
 addTestPictureWithPixels = function(name, gridWidth, gridHeight, rows, cols) {
 	var gridItemWidth = gridWidth / rows;
-	var gridItemHeight = (true) ? gridItemWidth : gridHeight / cols;
+	var gridItemHeight = gridHeight / cols;
 
 	var picID = MrtPictureCollection.insert({
 		width: gridWidth, 
