@@ -4,7 +4,7 @@
 The application is currently live at <a href="http://5perpix.majodev.meteor.com">5perpix.majodev.meteor.com</a>.
 
 <h2>Features</h2>
-* Drawing: SVGs are rendered using <a href="http://d3js.org/">d3.js</a> (I'll include a canvas drawing implementation in a future release). All successful changes to the color of a "pixel" are pushed to subscribed clients immediately. This is the basis for collaborative drawing.
+* Drawing: Both a SVG and a Canvas representation of a picture consisting of many rectangles ("big pixels") are rendered. Please take a look at the wonderful <a href="http://d3js.org/">d3.js</a>. All successful changes to the color of a "big pixel" are pushed to subscribed clients immediately. This is the basis for collaborative drawing.
 * Chatting: You can add messages to any picture. Inserts are immediately pushed to subscribed clients. Internally, messages are linked to a referencecollection, that links to other objects (this example currently links messages over a messagereference to pictures only.)
 * User-authentication: You have to be signed in to make ANY changes (submitting messages or updating pixels is else denied). Please hop to the <a href="http://docs.meteor.com/#accounts_api">meteor docs</a> for an overview of the smart packages accounts-ui and accounts-password.
 

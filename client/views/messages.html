@@ -2,11 +2,11 @@
 	<div class="messageHolder">
 		{{#if messageReference}}
 			{{#if currentUser}}
-				<div class="messageInformationUserLoggedIn">Messages: (signed in! allowed to post messages):</div>
+				<div class="messageInformationUserLoggedIn"><h2>Messages: (signed in! allowed to post messages):</h2></div>
 				{{> messageItemAdd}}
 			{{/if}}
 			{{#unless currentUser}}
-				<div class="messageInformationUserLoggedOut">Messages: (sign in to post your own messages):</div>
+				<div class="messageInformationUserLoggedOut"><h2>Messages: (sign in to post your own messages):</h2></div>
 			{{/unless}}
 			{{> messageDisplay}}
 		{{/if}}
